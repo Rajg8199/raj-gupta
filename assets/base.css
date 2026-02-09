@@ -4982,3 +4982,11 @@ product-recommendations:has([data-has-recommendations='false']) {
   font-style: normal;
   font-display: swap;
 }
+
+@font-face {
+  font-family: 'Jost-ExtraBold';
+  src: url('https://cdn.shopify.com/s/files/1/0622/2230/3329/files/Jost-ExtraBold.woff2?v=1770659340') format('woff2'),
+       url('https://cdn.shopify.com/s/files/1/0622/2230/3329/files/Jost-ExtraBold.woff?v=1770659340') format('woff');
+  font-style: normal;
+  font-display: swap;
+}
