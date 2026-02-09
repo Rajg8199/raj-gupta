@@ -71,6 +71,7 @@
         "button_text": "SHOP NOW",
         "button_link": "",
         "show_illustration": true,
+        "illustration_image": "shopify://shop_images/Group_1000007949.png",
         "show_footer": true,
         "footer_text": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
       }
