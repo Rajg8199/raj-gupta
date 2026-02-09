@@ -4965,3 +4965,12 @@ product-recommendations:has([data-has-recommendations='false']) {
     translate: 0px var(--atc-destination, 0px);
   }
 }
+
+
+@font-face {
+  font-family: 'Jost';
+  src: url('https://cdn.shopify.com/s/files/1/0622/2230/3329/files/Jost-Regular.woff2?v=1770659340') format('woff2'),
+       url('https://cdn.shopify.com/s/files/1/0622/2230/3329/files/Jost-Regular.woff?v=1770659340') format('woff');
+  font-style: normal;
+  font-display: swap;
+}
