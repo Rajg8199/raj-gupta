@@ -6,7 +6,7 @@
   .hero-banner {
     position: relative;
     width: 100%;
-    background-color: #F5F3EE;
+    {% comment %} background-color: #F5F3EE; {% endcomment %}
     overflow: hidden;
   }
 
@@ -233,11 +233,13 @@
   /* ========================================
      Bottom Footer Text
      ======================================== */
-  .hero-banner__footer {
+.hero-banner__footer {
     text-align: center;
+    margin: 0px auto;
+    max-width: 1440px;
     padding: 10px 40px;
     background-color: #F5F5F5;
-  }
+}
 
 .hero-banner__footer-text {
     font-family: 'Jost-regular';
