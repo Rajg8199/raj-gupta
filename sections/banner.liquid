@@ -123,7 +123,7 @@
   }
 
   /* Button Hover Effects */
-  {% comment %} .hero-banner__button::before {
+   .hero-banner__button::before {
     content: '';
     position: absolute;
     top: 0;
@@ -151,9 +151,8 @@
   .hero-banner__button:active {
     transform: translateY(0);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  } {% endcomment %}
-
-  .hero-banner__button::before {
+  }
+  {% comment %} .hero-banner__button::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -164,7 +163,7 @@
 
 .hero-banner__button:hover::before {
   transform: translateX(100%);
-}
+} {% endcomment %}
 
 
   /* ========================================
