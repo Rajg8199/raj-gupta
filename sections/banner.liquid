@@ -1,0 +1,537 @@
+
+
+<style>
+  /* ========================================
+     CSS Reset & Base Styles
+     ======================================== */
+  .hero-banner {
+    position: relative;
+    width: 100%;
+    background-color: #F5F3EE;
+    overflow: hidden;
+  }
+
+  .hero-banner * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /* ========================================
+     Container & Layout
+     ======================================== */
+  .hero-banner__container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 60px;
+    min-height: 600px;
+  }
+
+  /* ========================================
+     Left Content Area
+     ======================================== */
+  .hero-banner__content {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    padding: 60px 0;
+  }
+
+  /* Brand Name */
+  .hero-banner__brand {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #1A1A1A;
+    margin-bottom: 8px;
+  }
+
+  /* Main Heading */
+  .hero-banner__heading {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 56px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #1A1A1A;
+    margin-bottom: 8px;
+  }
+
+  /* Description Text */
+  .hero-banner__description {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: #4A4A4A;
+    max-width: 480px;
+  }
+
+  /* ========================================
+     Button Styles
+     ======================================== */
+  .hero-banner__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px 40px;
+    background-color: #1A1A1A;
+    color: #FFFFFF;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    width: fit-content;
+  }
+
+  /* Button Arrow */
+  .hero-banner__button-arrow {
+    display: inline-flex;
+    align-items: center;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .hero-banner__button-arrow svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+  }
+
+  /* Button Hover Effects */
+  .hero-banner__button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .hero-banner__button:hover {
+    background-color: #2D2D2D;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .hero-banner__button:hover::before {
+    left: 100%;
+  }
+
+  .hero-banner__button:hover .hero-banner__button-arrow {
+    transform: translateX(4px);
+  }
+
+  .hero-banner__button:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  /* ========================================
+     Right Illustration Area
+     ======================================== */
+  .hero-banner__illustration {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+  }
+
+  .hero-banner__illustration-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    aspect-ratio: 1 / 1;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    transition: transform 0.3s ease;
+  }
+
+  .hero-banner__illustration-wrapper:hover {
+    transform: scale(1.02);
+  }
+
+  /* ========================================
+     Top Bar with CTA
+     ======================================== */
+  .hero-banner__top-bar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #E8E537;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 10;
+  }
+
+  .hero-banner__top-bar-text {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1A1A1A;
+  }
+
+  .hero-banner__top-bar-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    background-color: #1A1A1A;
+    color: #E8E537;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .hero-banner__top-bar-button:hover {
+    background-color: #2D2D2D;
+    transform: translateX(4px);
+  }
+
+  .hero-banner__top-bar-button svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+  }
+
+  /* ========================================
+     Bottom Footer Text
+     ======================================== */
+  .hero-banner__footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    padding: 16px 40px;
+    background-color: transparent;
+  }
+
+  .hero-banner__footer-text {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #4A4A4A;
+  }
+
+  /* ========================================
+     Mobile Responsive Styles
+     ======================================== */
+  @media screen and (max-width: 989px) {
+    .hero-banner__container {
+      grid-template-columns: 1fr;
+      gap: 40px;
+      min-height: auto;
+      padding: 0 24px;
+    }
+
+    .hero-banner__content {
+      padding: 80px 0 40px;
+      gap: 24px;
+      text-align: center;
+      align-items: center;
+    }
+
+    .hero-banner__brand {
+      font-size: 14px;
+      letter-spacing: 2px;
+    }
+
+    .hero-banner__heading {
+      font-size: 40px;
+    }
+
+    .hero-banner__description {
+      font-size: 15px;
+      max-width: 100%;
+    }
+
+    .hero-banner__button {
+      padding: 14px 32px;
+      font-size: 13px;
+    }
+
+    .hero-banner__illustration {
+      padding: 20px 0 60px;
+    }
+
+    .hero-banner__illustration-wrapper {
+      max-width: 100%;
+    }
+
+    .hero-banner__top-bar {
+      width: 100%;
+      justify-content: center;
+      padding: 12px 24px;
+      flex-wrap: wrap;
+    }
+
+    .hero-banner__top-bar-text {
+      font-size: 13px;
+    }
+
+    .hero-banner__top-bar-button {
+      padding: 8px 20px;
+      font-size: 11px;
+    }
+
+    .hero-banner__footer {
+      padding: 12px 24px;
+    }
+
+    .hero-banner__footer-text {
+      font-size: 10px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .hero-banner__heading {
+      font-size: 32px;
+    }
+
+    .hero-banner__container {
+      padding: 0 16px;
+    }
+
+    .hero-banner__content {
+      padding: 70px 0 30px;
+    }
+  }
+
+  /* ========================================
+     Animation Keyframes
+     ======================================== */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .hero-banner__content > * {
+    animation: fadeInUp 0.6s ease-out backwards;
+  }
+
+  .hero-banner__brand {
+    animation-delay: 0.1s;
+  }
+
+  .hero-banner__heading {
+    animation-delay: 0.2s;
+  }
+
+  .hero-banner__description {
+    animation-delay: 0.3s;
+  }
+
+  .hero-banner__button {
+    animation-delay: 0.4s;
+  }
+</style>
+
+<section class="hero-banner">
+  {%- if section.settings.show_top_bar -%}
+    <div class="hero-banner__top-bar">
+      {%- if section.settings.top_bar_text != blank -%}
+        <span class="hero-banner__top-bar-text">{{ section.settings.top_bar_text }}</span>
+      {%- endif -%}
+      {%- if section.settings.top_bar_button_text != blank -%}
+        <a href="{{ section.settings.top_bar_button_link }}" class="hero-banner__top-bar-button">
+          {{ section.settings.top_bar_button_text }}
+          <span class="hero-banner__button-arrow">
+            <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/>
+            </svg>
+          </span>
+        </a>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  <div class="hero-banner__container">
+    <!-- Left Content Area -->
+    <div class="hero-banner__content">
+      {%- if section.settings.brand_name != blank -%}
+        <h3 class="hero-banner__brand">{{ section.settings.brand_name }}</h3>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <h1 class="hero-banner__heading">{{ section.settings.heading }}</h1>
+      {%- endif -%}
+
+      {%- if section.settings.description != blank -%}
+        <p class="hero-banner__description">{{ section.settings.description }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.button_text != blank -%}
+        <a href="{{ section.settings.button_link }}" class="hero-banner__button">
+          {{ section.settings.button_text }}
+          <span class="hero-banner__button-arrow">
+            <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/>
+            </svg>
+          </span>
+        </a>
+      {%- endif -%}
+    </div>
+
+    <!-- Right Illustration Area -->
+    <div class="hero-banner__illustration">
+      {%- if section.settings.show_illustration and section.settings.illustration_image != blank -%}
+        <div class="hero-banner__illustration-wrapper" style="background-image: url('{{ section.settings.illustration_image | image_url: width: 1200 }}');">
+        </div>
+      {%- elsif section.settings.show_illustration -%}
+        <div class="hero-banner__illustration-wrapper">
+          <!-- Illustration image not uploaded yet -->
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- if section.settings.show_footer and section.settings.footer_text != blank -%}
+    <div class="hero-banner__footer">
+      <p class="hero-banner__footer-text">{{ section.settings.footer_text }}</p>
+    </div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Hero Banner",
+  "tag": "section",
+  "class": "section-hero-banner",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Top Bar Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_top_bar",
+      "label": "Show top bar",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "top_bar_text",
+      "label": "Top bar text",
+      "default": "Find the ideal gift for your loved ones."
+    },
+    {
+      "type": "text",
+      "id": "top_bar_button_text",
+      "label": "Top bar button text",
+      "default": "CHOOSE GIFT"
+    },
+    {
+      "type": "url",
+      "id": "top_bar_button_link",
+      "label": "Top bar button link"
+    },
+    {
+      "type": "header",
+      "content": "Hero Content"
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Brand name",
+      "default": "TISSO VISON"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The Gift Guide"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "SHOP NOW"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Illustration Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_illustration",
+      "label": "Show illustration",
+      "default": true,
+      "info": "Toggle the illustration on the right side"
+    },
+    {
+      "type": "image_picker",
+      "id": "illustration_image",
+      "label": "Illustration image",
+      "info": "Upload the image with camera, glasses, watch, compass, etc. Recommended size: 1200x1200px"
+    },
+    {
+      "type": "header",
+      "content": "Footer Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_footer",
+      "label": "Show footer text",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "footer_text",
+      "label": "Footer text",
+      "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Banner",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
