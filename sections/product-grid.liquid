@@ -224,7 +224,8 @@ h2.product-grid__heading {
     margin: 10px 0px;
     display: block;
 }
-  /* Color Swatches */
+
+  /* Color Swatches with Color Lines */
   .quick-view-modal__color-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -233,27 +234,46 @@ h2.product-grid__heading {
 
   .quick-view-modal__color-option {
     position: relative;
-    padding: 12px 16px;
+    padding: 12px 16px 12px 24px; /* Added left padding for color line */
     border: 2px solid #e0e0e0;
     background-color: #ffffff;
-   font-family: 'Jost-Regular';
+    font-family: 'Jost-Regular';
     font-size: 14px;
     font-weight: 500;
     color: black;
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: center;
+    overflow: hidden;
+  }
+
+  /* Vertical color line on the left */
+  .quick-view-modal__color-option::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    background-color: var(--color-value, #e0e0e0);
+    transition: background-color 0.2s ease;
   }
 
   .quick-view-modal__color-option:hover {
     border-color: black;
   }
 
+  /* Selected state */
   .quick-view-modal__color-option.selected {
     border-color: black;
     border-width: 3px;
     background-color: black;
     color: #ffffff;
+  }
+
+  /* Color line turns black when selected */
+  .quick-view-modal__color-option.selected::before {
+    background-color: black;
   }
 
   /* Size Dropdown */
@@ -332,41 +352,41 @@ h2.product-grid__heading {
     border-radius: 50%;
     animation: spin 0.6s linear infinite;
   }
+  
   .quick-view-modal__top {
-  display: grid;
-  grid-template-columns: 120px 1fr;
-  gap: 16px;
-}
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 16px;
+  }
 
-.quick-view-modal__image-col img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-}
+  .quick-view-modal__image-col img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+  }
 
-.quick-view-modal__info-col {
+  .quick-view-modal__info-col {
     display: flex;
     flex-direction: column;
     gap: 8px;
     justify-content: flex-end;
-}
+  }
 
-.quick-view-modal__title {
-  font-size: 16px;
-  font-weight: 500;
-}
+  .quick-view-modal__title {
+    font-size: 16px;
+    font-weight: 500;
+  }
 
-.quick-view-modal__price {
-  font-size: 16px;
-  font-weight: 500;
-}
+  .quick-view-modal__price {
+    font-size: 16px;
+    font-weight: 500;
+  }
 
-.quick-view-modal__description {
-  font-size: 14px;
-  line-height: 1.4;
-  color: #666;
-}
-
+  .quick-view-modal__description {
+    font-size: 14px;
+    line-height: 1.4;
+    color: #666;
+  }
 
   @keyframes spin {
     to { transform: rotate(360deg); }
@@ -422,13 +442,14 @@ h2.product-grid__heading {
     .quick-view-modal__details {
       padding: 16px;
     }
+    
     .quick-view-modal__top {
-    grid-template-columns: 1fr;
-  }
+      grid-template-columns: 1fr;
+    }
 
-  .quick-view-modal__image-col img {
-    height: 220px;
-  }
+    .quick-view-modal__image-col img {
+      height: 220px;
+    }
   }
 
   /* ========================================
@@ -496,21 +517,19 @@ h2.product-grid__heading {
       </svg>
     </button>
 
-<div class="quick-view-modal__top">
-  <div class="quick-view-modal__image-col">
-    <img class="quick-view-modal__image" id="modal-image-{{ section.id }}" />
-  </div>
+    <div class="quick-view-modal__top">
+      <div class="quick-view-modal__image-col">
+        <img class="quick-view-modal__image" id="modal-image-{{ section.id }}" />
+      </div>
 
-  <div class="quick-view-modal__info-col">
-    <h2 class="quick-view-modal__title" id="modal-title-{{ section.id }}"></h2>
-    <p class="quick-view-modal__price" id="modal-price-{{ section.id }}"></p>
-    <p class="quick-view-modal__description" id="modal-description-{{ section.id }}"></p>
-  </div>
-</div>
-
+      <div class="quick-view-modal__info-col">
+        <h2 class="quick-view-modal__title" id="modal-title-{{ section.id }}"></h2>
+        <p class="quick-view-modal__price" id="modal-price-{{ section.id }}"></p>
+        <p class="quick-view-modal__description" id="modal-description-{{ section.id }}"></p>
+      </div>
+    </div>
 
     <div class="quick-view-modal__details">
-      
       <form id="quick-view-form-{{ section.id }}" class="quick-view-modal__form">
         <!-- Color Options -->
         <div class="quick-view-modal__option" id="color-option-{{ section.id }}"></div>
@@ -529,9 +548,8 @@ h2.product-grid__heading {
         >
           <span>Add to Cart</span>
           <svg width="36" height="12" viewBox="0 0 36 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M0.75 4.77295L9.20657e-08 4.77295L-9.20657e-08 6.27295L0.75 6.27295L0.75 4.77295ZM34.9798 6.05328C35.2727 5.76039 35.2727 5.28551 34.9798 4.99262L30.2068 0.21965C29.9139 -0.0732432 29.4391 -0.0732433 29.1462 0.21965C28.8533 0.512544 28.8533 0.987417 29.1462 1.28031L33.3888 5.52295L29.1462 9.76559C28.8533 10.0585 28.8533 10.5334 29.1462 10.8263C29.4391 11.1191 29.9139 11.1191 30.2068 10.8263L34.9798 6.05328ZM0.75 6.27295L34.4495 6.27295L34.4495 4.77295L0.75 4.77295L0.75 6.27295Z" fill="white"/>
-</svg>
-
+            <path d="M0.75 4.77295L9.20657e-08 4.77295L-9.20657e-08 6.27295L0.75 6.27295L0.75 4.77295ZM34.9798 6.05328C35.2727 5.76039 35.2727 5.28551 34.9798 4.99262L30.2068 0.21965C29.9139 -0.0732432 29.4391 -0.0732433 29.1462 0.21965C28.8533 0.512544 28.8533 0.987417 29.1462 1.28031L33.3888 5.52295L29.1462 9.76559C28.8533 10.0585 28.8533 10.5334 29.1462 10.8263C29.4391 11.1191 29.9139 11.1191 30.2068 10.8263L34.9798 6.05328ZM0.75 6.27295L34.4495 6.27295L34.4495 4.77295L0.75 4.77295L0.75 6.27295Z" fill="white"/>
+          </svg>
         </button>
       </form>
     </div>
@@ -546,6 +564,35 @@ h2.product-grid__heading {
   const closeBtn = modal.querySelector('.quick-view-modal__close');
   const form = document.getElementById(`quick-view-form-${sectionId}`);
   let cachedBundleVariantId = null;
+  
+  // Color mapping for variant display
+  const colorMap = {
+    'black': '#000000',
+    'white': '#FFFFFF',
+    'grey': '#808080',
+    'gray': '#808080',
+    'red': '#FF0000',
+    'blue': '#0000FF',
+    'green': '#008000',
+    'yellow': '#FFFF00',
+    'orange': '#FFA500',
+    'purple': '#800080',
+    'pink': '#FFC0CB',
+    'brown': '#A52A2A',
+    'beige': '#F5F5DC',
+    'navy': '#000080',
+    'maroon': '#800000',
+    'olive': '#808000',
+    'teal': '#008080',
+    'silver': '#C0C0C0',
+    'gold': '#FFD700',
+    'cream': '#FFFDD0'
+  };
+  
+  function getColorHex(colorName) {
+    const normalized = colorName.toLowerCase().trim();
+    return colorMap[normalized] || '#e0e0e0';
+  }
   
   // Product data storage
   const products = {
@@ -621,7 +668,7 @@ h2.product-grid__heading {
 
     // Set product details
     document.getElementById(`modal-title-${sectionId}`).textContent = currentProduct.title;
-    document.getElementById(`modal-price-${sectionId}`).textContent = currentProduct.price;
+    document.getElementById(`modal-price-${sectionId}`).textContent = currentProduct.priceFormatted;
     document.getElementById(`modal-description-${sectionId}`).textContent = currentProduct.description;
     document.getElementById(`modal-image-${sectionId}`).src = currentProduct.image;
     document.getElementById(`modal-image-${sectionId}`).alt = currentProduct.title;
@@ -669,6 +716,10 @@ h2.product-grid__heading {
           btn.textContent = value;
           btn.dataset.optionValue = value;
           btn.dataset.optionPosition = option.position;
+          
+          // Set CSS custom property for color line
+          const colorHex = getColorHex(value);
+          btn.style.setProperty('--color-value', colorHex);
 
           btn.addEventListener('click', () => {
             document.querySelectorAll('.quick-view-modal__color-option').forEach(b => b.classList.remove('selected'));
@@ -770,31 +821,29 @@ h2.product-grid__heading {
     }
   });
 
-function shouldAddBundle() {
-  if (!currentProduct.bundleVariantCheck) return false;
+  function shouldAddBundle() {
+    if (!currentProduct.bundleVariantCheck) return false;
 
-  const required = currentProduct.bundleVariantCheck
-    .split(',')
-    .map(v => v.trim().toLowerCase());
+    const required = currentProduct.bundleVariantCheck
+      .split(',')
+      .map(v => v.trim().toLowerCase());
 
-  const selected = Object.values(selectedOptions)
-    .filter(Boolean)
-    .map(v => v.toLowerCase());
+    const selected = Object.values(selectedOptions)
+      .filter(Boolean)
+      .map(v => v.toLowerCase());
 
-  return required.every(val => selected.includes(val));
-}
-
-
-async function addBundleProduct() {
-  if (!cachedBundleVariantId) {
-    const res = await fetch(`/products/${currentProduct.bundleProductHandle}.js`);
-    const data = await res.json();
-    cachedBundleVariantId = data.variants[0].id;
+    return required.every(val => selected.includes(val));
   }
 
-  return addToCart(cachedBundleVariantId, 1);
-}
+  async function addBundleProduct() {
+    if (!cachedBundleVariantId) {
+      const res = await fetch(`/products/${currentProduct.bundleProductHandle}.js`);
+      const data = await res.json();
+      cachedBundleVariantId = data.variants[0].id;
+    }
 
+    return addToCart(cachedBundleVariantId, 1);
+  }
 
   async function addToCart(variantId, quantity) {
     const response = await fetch('/cart/add.js', {
