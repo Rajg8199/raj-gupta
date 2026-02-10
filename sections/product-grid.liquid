@@ -812,7 +812,7 @@ h2.product-grid__heading {
       }, 1000);
 
       // Trigger cart refresh (if using theme cart)
-openCartDrawer();
+      document.documentElement.dispatchEvent(new CustomEvent('cart:refresh'));
       
     } catch (error) {
       console.error('Error adding to cart:', error);
@@ -822,19 +822,22 @@ openCartDrawer();
     }
   });
 
-  function shouldAddBundle() {
-    if (!currentProduct.bundleVariantCheck) return false;
-
-    const required = currentProduct.bundleVariantCheck
-      .split(',')
-      .map(v => v.trim().toLowerCase());
-
-    const selected = Object.values(selectedOptions)
-      .filter(Boolean)
-      .map(v => v.toLowerCase());
-
-    return required.every(val => selected.includes(val));
+function shouldAddBundle() {
+  if (!currentProduct.bundleVariantCheck || !currentProduct.bundleProductHandle) {
+    return false;
   }
+
+  const required = currentProduct.bundleVariantCheck
+    .split(',')
+    .map(v => v.trim().toLowerCase());
+
+  const selected = Object.values(selectedOptions)
+    .filter(Boolean)
+    .map(v => v.trim().toLowerCase());
+
+  return required.every(req => selected.includes(req));
+}
+
 
   async function addBundleProduct() {
     if (!cachedBundleVariantId) {
@@ -864,19 +867,7 @@ openCartDrawer();
 
     return response.json();
   }
-  function openCartDrawer() {
-  // Dawn & most OS 2.0 themes
-  const cartDrawer = document.querySelector('cart-drawer');
-  if (cartDrawer && typeof cartDrawer.open === 'function') {
-    cartDrawer.open();
-    return;
-  }
-
-  // Alternative: click cart icon
-  const cartIcon = document.querySelector('a[href="/cart"], button[name="open-cart"]');
-  if (cartIcon) cartIcon.click();
-}
-
+  
 
   function formatMoney(cents) {
     return '{{ shop.money_format }}'.replace('{{amount}}', (cents / 100).toFixed(2));
