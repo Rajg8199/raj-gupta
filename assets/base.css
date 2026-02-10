@@ -4998,3 +4998,11 @@ product-recommendations:has([data-has-recommendations='false']) {
   font-style: normal;
   font-display: swap;
 }
+
+@font-face {
+  font-family: 'Lustria-Regular';
+  src: url('https://cdn.shopify.com/s/files/1/0622/2230/3329/files/Lustria-Regular.woff2?v=1770732666') format('woff2'),
+       url('https://cdn.shopify.com/s/files/1/0622/2230/3329/files/Lustria-Regular.woff?v=1770732666') format('woff');
+  font-style: normal;
+  font-display: swap;
+}
