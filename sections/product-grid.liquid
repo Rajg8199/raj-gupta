@@ -872,6 +872,33 @@ async function addBundleProduct() {
 
     return response.json();
   }
+  async function openHorizonCartDrawer() {
+  const drawer =
+    document.querySelector('cart-drawer') ||
+    document.querySelector('#CartDrawer') ||
+    document.querySelector('[data-cart-drawer]');
+
+  if (!drawer) {
+    console.warn('Horizon cart drawer not found');
+    return;
+  }
+
+  // Fetch fresh cart
+  const cart = await fetch('/cart.js').then(r => r.json());
+
+  // Update drawer contents
+  if (typeof drawer.renderContents === 'function') {
+    drawer.renderContents(cart);
+  }
+
+  // ✅ THE REAL OPEN LOGIC (Horizon-safe)
+  drawer.classList.add('active');
+  drawer.setAttribute('aria-hidden', 'false');
+  drawer.dataset.open = 'true';
+
+  document.body.classList.add('overflow-hidden');
+}
+
   
 
   function formatMoney(cents) {
