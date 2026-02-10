@@ -74,10 +74,74 @@
         "show_footer": true,
         "footer_text": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
       }
+    },
+    "product_grid_8DgRnW": {
+      "type": "product-grid",
+      "blocks": {
+        "product_4QYibV": {
+          "type": "product",
+          "settings": {
+            "product": "black-leather-bag",
+            "bundle_variant_check": "",
+            "bundle_product_handle": ""
+          }
+        },
+        "product_9c7wzp": {
+          "type": "product",
+          "settings": {
+            "product": "blue-silk-tuxedo",
+            "bundle_variant_check": "",
+            "bundle_product_handle": ""
+          }
+        },
+        "product_UAnmye": {
+          "type": "product",
+          "settings": {
+            "product": "chequered-red-shirt",
+            "bundle_variant_check": "",
+            "bundle_product_handle": ""
+          }
+        },
+        "product_JfhFFN": {
+          "type": "product",
+          "settings": {
+            "product": "chequered-red-shirt",
+            "bundle_variant_check": "",
+            "bundle_product_handle": ""
+          }
+        },
+        "product_4bPWrF": {
+          "type": "product",
+          "settings": {
+            "product": "classic-leather-jacket",
+            "bundle_variant_check": "",
+            "bundle_product_handle": ""
+          }
+        },
+        "product_Np7eDH": {
+          "type": "product",
+          "settings": {
+            "product": "classic-varsity-top",
+            "bundle_variant_check": "",
+            "bundle_product_handle": ""
+          }
+        }
+      },
+      "block_order": [
+        "product_4QYibV",
+        "product_9c7wzp",
+        "product_UAnmye",
+        "product_JfhFFN",
+        "product_4bPWrF",
+        "product_Np7eDH"
+      ],
+      "name": "Product Grid",
+      "settings": {}
     }
   },
   "order": [
     "main",
-    "banner_Mz8LeT"
+    "banner_Mz8LeT",
+    "product_grid_8DgRnW"
   ]
 }
