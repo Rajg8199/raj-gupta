@@ -132,6 +132,7 @@
   window.fetch = async function (url, options) {
     const response = await originalFetch(url, options);
 
+    // Only intercept add-to-cart
     if (
       typeof url === 'string' &&
       url.includes('/cart/add.js') &&
@@ -141,9 +142,10 @@
         const body = JSON.parse(options.body || '{}');
         if (!body.id) return response;
 
-        // 1️⃣ Get cart after add
+        // 1️⃣ Get updated cart
         const cart = await originalFetch('/cart.js').then(r => r.json());
 
+        // Find the just-added item
         const addedItem = cart.items.find(
           item => item.variant_id == body.id
         );
@@ -153,29 +155,30 @@
           return response;
         }
 
-        // 2️⃣ Check Black + Medium
+        // 2️⃣ Check for Black + Medium
         const optionsSelected = [
           addedItem.option1,
           addedItem.option2,
           addedItem.option3
         ].map(v => (v || '').toLowerCase());
 
-        if (
-          !optionsSelected.includes('black') ||
-          !optionsSelected.includes('medium')
-        ) {
+        const hasBlack = optionsSelected.includes('black');
+        const hasMedium = optionsSelected.includes('medium');
+
+        if (!hasBlack || !hasMedium) {
           openHorizonDrawer();
           return response;
         }
 
-        // 3️⃣ Prevent duplicate bundle
+        // 3️⃣ Prevent duplicate jacket
+        const jacketHandle = 'dark-winter-jacket';
         const alreadyAdded = cart.items.some(
-          item => item.handle === 'dark-winter-jacket'
+          item => item.handle === jacketHandle
         );
 
         if (!alreadyAdded) {
-          // 4️⃣ Fetch bundle product
-          const productRes = await originalFetch('/products/dark-winter-jacket.js');
+          // 4️⃣ Fetch jacket product
+          const productRes = await originalFetch(`/products/${jacketHandle}.js`);
           if (!productRes.ok) return response;
 
           const product = await productRes.json();
