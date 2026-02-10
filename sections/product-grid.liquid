@@ -839,15 +839,19 @@ function shouldAddBundle() {
 }
 
 
-  async function addBundleProduct() {
-    if (!cachedBundleVariantId) {
-      const res = await fetch(`/products/${currentProduct.bundleProductHandle}.js`);
-      const data = await res.json();
-      cachedBundleVariantId = data.variants[0].id;
-    }
+async function addBundleProduct() {
+  if (!cachedBundleVariantId) {
+    const res = await fetch(`/products/${currentProduct.bundleProductHandle}.js`);
+    if (!res.ok) throw new Error('Bundle product not found');
 
-    return addToCart(cachedBundleVariantId, 1);
+    const data = await res.json();
+    cachedBundleVariantId = data.variants.find(v => v.available)?.id;
   }
+
+  if (!cachedBundleVariantId) return;
+  return addToCart(cachedBundleVariantId, 1);
+}
+
 
   async function addToCart(variantId, quantity) {
     const response = await fetch('/cart/add.js', {
