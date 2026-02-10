@@ -732,11 +732,7 @@ h2.product-grid__heading {
           colorGrid.appendChild(btn);
         });
 
-        // Auto-select first color
-        {% comment %} if (option.values.length > 0) {
-          selectedOptions[`option${option.position}`] = option.values[0];
-          colorGrid.querySelector('.quick-view-modal__color-option').classList.add('selected');
-        } {% endcomment %}
+  
 
       } else if (optionName === 'size') {
         // Render size dropdown
@@ -760,24 +756,33 @@ h2.product-grid__heading {
   }
   
 
-  function updateVariant() {
-    const variant = currentProduct.variants.find(v => {
-      return (
-        (!selectedOptions.option1 || v.option1 === selectedOptions.option1) &&
-        (!selectedOptions.option2 || v.option2 === selectedOptions.option2) &&
-        (!selectedOptions.option3 || v.option3 === selectedOptions.option3)
-      );
-    });
+function updateVariant() {
+  const addToCartBtn = document.getElementById(`add-to-cart-btn-${sectionId}`);
 
-    if (variant) {
-      document.getElementById(`variant-id-${sectionId}`).value = variant.id;
-      document.getElementById(`modal-price-${sectionId}`).textContent = formatMoney(variant.price);
-      
-      const addToCartBtn = document.getElementById(`add-to-cart-btn-${sectionId}`);
-      addToCartBtn.disabled = !variant.available;
-      addToCartBtn.querySelector('span').textContent = variant.available ? 'Add to Cart' : 'Sold Out';
-    }
+  const variant = currentProduct.variants.find(v => {
+    return (
+      (!selectedOptions.option1 || v.option1 === selectedOptions.option1) &&
+      (!selectedOptions.option2 || v.option2 === selectedOptions.option2) &&
+      (!selectedOptions.option3 || v.option3 === selectedOptions.option3)
+    );
+  });
+
+  if (variant && Object.keys(selectedOptions).length === currentProduct.options.length) {
+    document.getElementById(`variant-id-${sectionId}`).value = variant.id;
+    document.getElementById(`modal-price-${sectionId}`).textContent = formatMoney(variant.price);
+
+    addToCartBtn.disabled = !variant.available;
+    addToCartBtn.querySelector('span').textContent = variant.available
+      ? 'Add to Cart'
+      : 'Sold Out';
+  } else {
+    // ❗ No full selection yet
+    document.getElementById(`variant-id-${sectionId}`).value = '';
+    addToCartBtn.disabled = true;
+    addToCartBtn.querySelector('span').textContent = 'Select options';
   }
+}
+
 
   // Form submission
   form.addEventListener('submit', async (e) => {
