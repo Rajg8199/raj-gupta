@@ -37,7 +37,94 @@
 
     {{ content_for_header }}
   </head>
-  
+  <script>
+(function () {
+  const originalFetch = window.fetch;
+
+  window.fetch = async function (url, options) {
+    const response = await originalFetch(url, options);
+
+    if (
+      typeof url === 'string' &&
+      url.includes('/cart/add.js') &&
+      options?.method === 'POST'
+    ) {
+      try {
+        const body = JSON.parse(options.body || '{}');
+        if (!body.id) return response;
+
+        /* 1️⃣ Get variant info */
+        const variantRes = await fetch(`/variants/${body.id}.json`);
+        if (!variantRes.ok) return response;
+
+        const variantData = await variantRes.json();
+        const title = variantData.variant.title.toLowerCase();
+
+        /* 2️⃣ Check Black + Medium */
+        if (!title.includes('black') || !title.includes('medium')) {
+          openHorizonDrawer();
+          return response;
+        }
+
+        /* 3️⃣ Get current cart */
+        const cart = await fetch('/cart.js').then(r => r.json());
+
+        const alreadyAdded = cart.items.some(
+          item => item.handle === 'dark-winter-jacket'
+        );
+
+        if (!alreadyAdded) {
+          /* 4️⃣ Fetch bundle product */
+          const productRes = await fetch('/products/dark-winter-jacket.js');
+          if (!productRes.ok) return response;
+
+          const product = await productRes.json();
+          const bundleVariant = product.variants.find(v => v.available);
+
+          if (bundleVariant) {
+            await originalFetch('/cart/add.js', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                id: bundleVariant.id,
+                quantity: 1
+              })
+            });
+          }
+        }
+
+        /* 5️⃣ Open Horizon cart drawer */
+        openHorizonDrawer();
+
+      } catch (err) {
+        console.warn('Bundle logic error:', err);
+      }
+    }
+
+    return response;
+  };
+
+  function openHorizonDrawer() {
+    requestAnimationFrame(() => {
+      const drawer =
+        document.querySelector('cart-drawer') ||
+        document.querySelector('#CartDrawer');
+
+      if (!drawer) return;
+
+      if (typeof drawer.open === 'function') {
+        drawer.open();
+      } else {
+        drawer.classList.add('active');
+        drawer.setAttribute('aria-hidden', 'false');
+      }
+
+      document.body.classList.add('overflow-hidden');
+    });
+  }
+})();
+</script>
+
 
   <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}">
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
