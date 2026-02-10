@@ -558,31 +558,19 @@ h2.product-grid__heading {
 </div>
 
 <script>
-(function() {
+(function () {
   const sectionId = '{{ section.id }}';
   const modal = document.getElementById(`quick-view-modal-${sectionId}`);
   const closeBtn = modal.querySelector('.quick-view-modal__close');
-  const form = document.getElementById(`quick-view-form-${sectionId}`);
-
-  const colorMap = {
-    black:'#000', white:'#fff', grey:'#808080', gray:'#808080',
-    red:'#f00', blue:'#00f', green:'#080', yellow:'#ff0',
-    orange:'#fa0', purple:'#800080', pink:'#ffc0cb',
-    brown:'#a52a2a', beige:'#f5f5dc', navy:'#000080',
-    maroon:'#800000', olive:'#808000', teal:'#008080',
-    silver:'#c0c0c0', gold:'#ffd700', cream:'#fffdd0'
-  };
-
-  const getColorHex = c => colorMap[c.toLowerCase()] || '#e0e0e0';
+  const addBtn = document.getElementById(`add-to-cart-btn-${sectionId}`);
+  const variantInput = document.getElementById(`variant-id-${sectionId}`);
 
   const products = {
     {%- for block in section.blocks -%}
       {%- if block.type == 'product' and block.settings.product != blank -%}
       '{{ block.settings.product.id }}': {
-        id: {{ block.settings.product.id }},
         title: {{ block.settings.product.title | json }},
-        priceFormatted: {{ block.settings.product.price | money | json }},
-        description: {{ block.settings.product.description | strip_html | truncate: 150 | json }},
+        price: {{ block.settings.product.price | money | json }},
         image: {{ block.settings.product.featured_image | image_url: width: 800 | json }},
         variants: [
           {%- for v in block.settings.product.variants -%}
@@ -612,23 +600,24 @@ h2.product-grid__heading {
   let currentProduct = null;
   let selectedOptions = {};
 
-  /* OPEN QUICK VIEW — FIXED */
+  /* OPEN QUICK VIEW */
   document.querySelectorAll('[data-quick-view-trigger]').forEach(btn => {
     btn.addEventListener('click', () => {
-      const productId = btn.getAttribute('data-quick-view-trigger');
-      openQuickView(productId);
+      const id = btn.getAttribute('data-quick-view-trigger');
+      openModal(id);
     });
   });
 
-  function openQuickView(productId) {
-    currentProduct = products[productId];
+  function openModal(id) {
+    currentProduct = products[id];
     if (!currentProduct) return;
 
     selectedOptions = {};
+    variantInput.value = '';
+    addBtn.disabled = true;
 
     document.getElementById(`modal-title-${sectionId}`).textContent = currentProduct.title;
-    document.getElementById(`modal-price-${sectionId}`).textContent = currentProduct.priceFormatted;
-    document.getElementById(`modal-description-${sectionId}`).textContent = currentProduct.description;
+    document.getElementById(`modal-price-${sectionId}`).textContent = currentProduct.price;
     document.getElementById(`modal-image-${sectionId}`).src = currentProduct.image;
 
     renderOptions();
@@ -642,8 +631,6 @@ h2.product-grid__heading {
   function closeModal() {
     modal.classList.remove('active');
     document.body.classList.remove('modal-open');
-    currentProduct = null;
-    selectedOptions = {};
   }
 
   function renderOptions() {
@@ -656,49 +643,33 @@ h2.product-grid__heading {
       const name = option.name.toLowerCase();
 
       if (name === 'color' || name === 'colour') {
-        colorWrap.innerHTML = `
-          <label class="quick-view-modal__option-label">Color</label>
-          <div class="quick-view-modal__color-grid"></div>
-        `;
-        const grid = colorWrap.querySelector('.quick-view-modal__color-grid');
-
-        option.values.forEach(value => {
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'quick-view-modal__color-option';
-          btn.textContent = value;
-          btn.style.setProperty('--color-value', getColorHex(value));
-
-          btn.onclick = () => {
-            grid.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            selectedOptions[`option${option.position}`] = value;
+        colorWrap.innerHTML = '<label>Color</label>';
+        option.values.forEach(val => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.textContent = val;
+          b.onclick = () => {
+            selectedOptions[`option${option.position}`] = val;
             updateVariant();
           };
-          grid.appendChild(btn);
+          colorWrap.appendChild(b);
         });
       }
 
       if (name === 'size') {
-        sizeWrap.innerHTML = `
-          <label class="quick-view-modal__option-label">Size</label>
-          <select class="quick-view-modal__size-select">
-            <option value="">Choose your size</option>
-            ${option.values.map(v => `<option value="${v}">${v}</option>`).join('')}
-          </select>
-        `;
-        sizeWrap.querySelector('select').onchange = e => {
+        const select = document.createElement('select');
+        select.innerHTML = `<option value="">Choose size</option>` +
+          option.values.map(v => `<option>${v}</option>`).join('');
+        select.onchange = e => {
           selectedOptions[`option${option.position}`] = e.target.value;
           updateVariant();
         };
+        sizeWrap.appendChild(select);
       }
     });
-
-    updateVariant();
   }
 
   function updateVariant() {
-    const btn = document.getElementById(`add-to-cart-btn-${sectionId}`);
     const variant = currentProduct.variants.find(v =>
       (!selectedOptions.option1 || v.option1 === selectedOptions.option1) &&
       (!selectedOptions.option2 || v.option2 === selectedOptions.option2) &&
@@ -706,23 +677,23 @@ h2.product-grid__heading {
     );
 
     if (variant && Object.keys(selectedOptions).length === currentProduct.options.length) {
-      document.getElementById(`variant-id-${sectionId}`).value = variant.id;
-      btn.disabled = !variant.available;
+      variantInput.value = variant.id;
+      addBtn.disabled = !variant.available;
     } else {
-      document.getElementById(`variant-id-${sectionId}`).value = '';
-      btn.disabled = true;
+      variantInput.value = '';
+      addBtn.disabled = true;
     }
   }
 
-  form.addEventListener('submit', async e => {
-    e.preventDefault();
-    const id = document.getElementById(`variant-id-${sectionId}`).value;
-    if (!id) return alert('Please select all options');
+  /* ✅ REAL ADD TO CART (NO FORM SUBMIT) */
+  addBtn.addEventListener('click', async () => {
+    const id = variantInput.value;
+    if (!id) return alert('Select options');
 
     await fetch('/cart/add.js', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ id, quantity:1 })
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, quantity: 1 })
     });
 
     closeModal();
@@ -730,6 +701,7 @@ h2.product-grid__heading {
 
 })();
 </script>
+
 
 
 
