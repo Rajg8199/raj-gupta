@@ -812,7 +812,7 @@ h2.product-grid__heading {
       }, 1000);
 
       // Trigger cart refresh (if using theme cart)
-      document.documentElement.dispatchEvent(new CustomEvent('cart:refresh'));
+openCartDrawer();
       
     } catch (error) {
       console.error('Error adding to cart:', error);
@@ -864,6 +864,19 @@ h2.product-grid__heading {
 
     return response.json();
   }
+  function openCartDrawer() {
+  // Dawn & most OS 2.0 themes
+  const cartDrawer = document.querySelector('cart-drawer');
+  if (cartDrawer && typeof cartDrawer.open === 'function') {
+    cartDrawer.open();
+    return;
+  }
+
+  // Alternative: click cart icon
+  const cartIcon = document.querySelector('a[href="/cart"], button[name="open-cart"]');
+  if (cartIcon) cartIcon.click();
+}
+
 
   function formatMoney(cents) {
     return '{{ shop.money_format }}'.replace('{{amount}}', (cents / 100).toFixed(2));
