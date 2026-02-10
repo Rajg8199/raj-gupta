@@ -564,9 +564,6 @@ h2.product-grid__heading {
   const closeBtn = modal.querySelector('.quick-view-modal__close');
   const form = document.getElementById(`quick-view-form-${sectionId}`);
 
-  /* -------------------------------
-     COLOR MAP (UI ONLY)
-  -------------------------------- */
   const colorMap = {
     black:'#000', white:'#fff', grey:'#808080', gray:'#808080',
     red:'#f00', blue:'#00f', green:'#080', yellow:'#ff0',
@@ -578,9 +575,6 @@ h2.product-grid__heading {
 
   const getColorHex = c => colorMap[c.toLowerCase()] || '#e0e0e0';
 
-  /* -------------------------------
-     PRODUCT DATA
-  -------------------------------- */
   const products = {
     {%- for block in section.blocks -%}
       {%- if block.type == 'product' and block.settings.product != blank -%}
@@ -597,7 +591,6 @@ h2.product-grid__heading {
             option1: {{ v.option1 | json }},
             option2: {{ v.option2 | json }},
             option3: {{ v.option3 | json }},
-            price: {{ v.price }},
             available: {{ v.available | json }}
           }{% unless forloop.last %},{% endunless %}
           {%- endfor -%}
@@ -619,11 +612,12 @@ h2.product-grid__heading {
   let currentProduct = null;
   let selectedOptions = {};
 
-  /* -------------------------------
-     OPEN QUICK VIEW
-  -------------------------------- */
+  /* OPEN QUICK VIEW — FIXED */
   document.querySelectorAll('[data-quick-view-trigger]').forEach(btn => {
-    btn.addEventListener('click', () => openQuickView(btn.dataset.quickViewTrigger));
+    btn.addEventListener('click', () => {
+      const productId = btn.getAttribute('data-quick-view-trigger');
+      openQuickView(productId);
+    });
   });
 
   function openQuickView(productId) {
@@ -642,9 +636,6 @@ h2.product-grid__heading {
     document.body.classList.add('modal-open');
   }
 
-  /* -------------------------------
-     CLOSE MODAL
-  -------------------------------- */
   closeBtn.onclick = closeModal;
   modal.onclick = e => e.target === modal && closeModal();
 
@@ -655,9 +646,6 @@ h2.product-grid__heading {
     selectedOptions = {};
   }
 
-  /* -------------------------------
-     RENDER OPTIONS (NO DEFAULT SELECT)
-  -------------------------------- */
   function renderOptions() {
     const colorWrap = document.getElementById(`color-option-${sectionId}`);
     const sizeWrap = document.getElementById(`size-option-${sectionId}`);
@@ -709,9 +697,6 @@ h2.product-grid__heading {
     updateVariant();
   }
 
-  /* -------------------------------
-     VARIANT MATCHING
-  -------------------------------- */
   function updateVariant() {
     const btn = document.getElementById(`add-to-cart-btn-${sectionId}`);
     const variant = currentProduct.variants.find(v =>
@@ -729,9 +714,6 @@ h2.product-grid__heading {
     }
   }
 
-  /* -------------------------------
-     ADD TO CART (SIMPLE)
-  -------------------------------- */
   form.addEventListener('submit', async e => {
     e.preventDefault();
     const id = document.getElementById(`variant-id-${sectionId}`).value;
@@ -748,6 +730,7 @@ h2.product-grid__heading {
 
 })();
 </script>
+
 
 
 {% schema %}
