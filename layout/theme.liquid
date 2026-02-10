@@ -125,7 +125,7 @@
       {% render 'quick-add-modal' %}
     {% endif %}
 
-      <script>
+<script>
 (function () {
   const originalFetch = window.fetch;
 
@@ -141,29 +141,29 @@
         const body = JSON.parse(options.body || '{}');
         if (!body.id) return response;
 
-        /* 1️⃣ Get variant info */
-        const variantRes = await fetch(`/variants/${body.id}.json`);
+        // 1️⃣ Variant info
+        const variantRes = await originalFetch(`/variants/${body.id}.json`);
         if (!variantRes.ok) return response;
 
         const variantData = await variantRes.json();
         const title = variantData.variant.title.toLowerCase();
 
-        /* 2️⃣ Check Black + Medium */
+        // 2️⃣ Check Black + Medium
         if (!title.includes('black') || !title.includes('medium')) {
           openHorizonDrawer();
           return response;
         }
 
-        /* 3️⃣ Get current cart */
-        const cart = await fetch('/cart.js').then(r => r.json());
+        // 3️⃣ Get cart
+        const cart = await originalFetch('/cart.js').then(r => r.json());
 
         const alreadyAdded = cart.items.some(
           item => item.handle === 'dark-winter-jacket'
         );
 
         if (!alreadyAdded) {
-          /* 4️⃣ Fetch bundle product */
-          const productRes = await fetch('/products/dark-winter-jacket.js');
+          // 4️⃣ Bundle product
+          const productRes = await originalFetch('/products/dark-winter-jacket.js');
           if (!productRes.ok) return response;
 
           const product = await productRes.json();
@@ -181,7 +181,7 @@
           }
         }
 
-        /* 5️⃣ Open Horizon cart drawer */
+        // 5️⃣ Open Horizon drawer
         openHorizonDrawer();
 
       } catch (err) {
@@ -212,6 +212,7 @@
   }
 })();
 </script>
+
 
   </body>
 </html>
