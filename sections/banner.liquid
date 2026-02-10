@@ -380,13 +380,16 @@
     <div class="hero-banner__top-bar">
          {%- if section.settings.brand_logo != blank -%}
   <div class="hero-banner__brand">
-    <img
-      src="{{ section.settings.brand_logo | image_url: width: 300 }}"
-      alt="{{ section.settings.brand_logo.alt | escape }}"
-      loading="lazy"
-    >
+    <a href="{{ routes.root_url }}" aria-label="Go to homepage">
+      <img
+        src="{{ section.settings.brand_logo | image_url: width: 300 }}"
+        alt="{{ section.settings.brand_logo.alt | escape }}"
+        loading="lazy"
+      >
+    </a>
   </div>
 {%- endif -%}
+
 
       {%- if section.settings.top_bar_text != blank -%}
         <span class="hero-banner__top-bar-text">{{ section.settings.top_bar_text }}</span>
