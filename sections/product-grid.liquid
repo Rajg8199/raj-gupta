@@ -803,21 +803,17 @@ h2.product-grid__heading {
       }
 
       // Success feedback
-// Success feedback
-addToCartBtn.classList.remove('loading');
-addToCartBtn.querySelector('span').textContent = 'Added!';
-
-// OPEN CART DRAWER (Horizon)
-await openHorizonCartDrawer();
-
-setTimeout(() => {
-  closeModal();
-  addToCartBtn.querySelector('span').textContent = 'Add to Cart';
-  addToCartBtn.disabled = false;
-}, 600);
-
-
+      addToCartBtn.classList.remove('loading');
+      addToCartBtn.querySelector('span').textContent = 'Added!';
       
+      setTimeout(() => {
+        closeModal();
+        addToCartBtn.querySelector('span').textContent = 'Add to Cart';
+        addToCartBtn.disabled = false;
+      }, 1000);
+
+      // Trigger cart refresh (if using theme cart)
+      document.documentElement.dispatchEvent(new CustomEvent('cart:refresh'));
       
     } catch (error) {
       console.error('Error adding to cart:', error);
@@ -876,33 +872,7 @@ async function addBundleProduct() {
 
     return response.json();
   }
-  async function openHorizonCartDrawer() {
-  const drawer =
-    document.querySelector('cart-drawer') ||
-    document.querySelector('#CartDrawer') ||
-    document.querySelector('[data-cart-drawer]');
-
-  if (!drawer) {
-    console.warn('Horizon cart drawer not found');
-    return;
-  }
-
-  // Fetch fresh cart
-  const cart = await fetch('/cart.js').then(r => r.json());
-
-  // Update drawer contents
-  if (typeof drawer.renderContents === 'function') {
-    drawer.renderContents(cart);
-  }
-
-  // ✅ THE REAL OPEN LOGIC (Horizon-safe)
-  drawer.classList.add('active');
-  drawer.setAttribute('aria-hidden', 'false');
-  drawer.dataset.open = 'true';
-
-  document.body.classList.add('overflow-hidden');
-}
-
+  
   
 
   function formatMoney(cents) {
