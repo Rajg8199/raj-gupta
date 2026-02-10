@@ -37,65 +37,7 @@
 
     {{ content_for_header }}
   </head>
-  <script>
-(function () {
-  const originalFetch = window.fetch;
-
-  window.fetch = async function (url, options) {
-    const response = await originalFetch(url, options);
-
-    if (url.includes('/cart/add.js') && options?.method === 'POST') {
-      try {
-        const body = JSON.parse(options.body || '{}');
-
-        // Get variant data
-        const product = await fetch(`/variants/${body.id}.json`).then(r => r.json());
-        const title = product.variant.title.toLowerCase();
-
-        // CHECK: Black + Medium
-        if (title.includes('black') && title.includes('medium')) {
-          const cart = await fetch('/cart.js').then(r => r.json());
-
-          const alreadyAdded = cart.items.some(
-            item => item.handle === 'soft-winter-jacket'
-          );
-
-          if (!alreadyAdded) {
-            const jacket = await fetch('/products/soft-winter-jacket.js').then(r => r.json());
-            const jacketVariant = jacket.variants.find(v => v.available);
-
-            if (jacketVariant) {
-              await originalFetch('/cart/add.js', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: jacketVariant.id, quantity: 1 })
-              });
-            }
-          }
-        }
-
-        // OPEN HORIZON CART DRAWER
-        requestAnimationFrame(() => {
-          const drawer =
-            document.querySelector('cart-drawer') ||
-            document.querySelector('#CartDrawer');
-
-          if (drawer?.open) drawer.open();
-          else drawer?.classList.add('active');
-
-          document.body.classList.add('overflow-hidden');
-        });
-
-      } catch (e) {
-        console.warn('Bundle logic skipped:', e);
-      }
-    }
-
-    return response;
-  };
-})();
-</script>
-
+  
 
   <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}">
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
