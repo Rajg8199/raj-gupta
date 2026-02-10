@@ -1,9 +1,10 @@
 
+
 <style>
   /* ========================================
      CSS Reset & Base Styles
      ======================================== */
-.product-grid-section {
+  .product-grid-section {
     position: relative;
     width: 100%;
     margin: 0px auto;
@@ -12,12 +13,13 @@
     padding: 90px 52px 0px 52px;
     gap: 30px;
     flex-direction: column;
-}
-h2.product-grid__heading {
+  }
+
+  h2.product-grid__heading {
     font-size: 36px;
-    font-family: 'Jost-Regular';
+    font-family: 'Jost-Regular', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     line-height: 120%;
-}
+  }
 
   .product-grid-section * {
     margin: 0;
@@ -341,6 +343,14 @@ h2.product-grid__heading {
      Mobile Responsive
      ======================================== */
   @media screen and (max-width: 989px) {
+    .product-grid-section {
+      padding: 60px 32px 0px 32px;
+    }
+
+    h2.product-grid__heading {
+      font-size: 30px;
+    }
+
     .product-grid__container {
       grid-template-columns: repeat(2, 1fr);
     }
@@ -355,6 +365,15 @@ h2.product-grid__heading {
   }
 
   @media screen and (max-width: 749px) {
+    .product-grid-section {
+      padding: 40px 16px 0px 16px;
+      gap: 24px;
+    }
+
+    h2.product-grid__heading {
+      font-size: 24px;
+    }
+
     .quick-view-modal__title {
       font-size: 16px;
     }
@@ -385,11 +404,11 @@ h2.product-grid__heading {
 </style>
 
 <section class="product-grid-section" id="product-grid-{{ section.id }}">
-    {%- if section.settings.vision_text != blank -%}
-  <h2 class="product-grid__heading">
-    {{ section.settings.vision_text }}
-  </h2>
-{%- endif -%}
+  {%- if section.settings.vision_text != blank -%}
+    <h2 class="product-grid__heading">
+      {{ section.settings.vision_text }}
+    </h2>
+  {%- endif -%}
 
   <div class="product-grid__container">
     {%- for block in section.blocks -%}
@@ -755,13 +774,14 @@ h2.product-grid__heading {
   "name": "Product Grid",
   "tag": "section",
   "class": "section-product-grid",
-  "settings": [{
-  "type": "text",
-  "id": "vision_text",
-  "label": "Vision text",
-  "default": "Tisso vision in the wild"
-},
-],
+  "settings": [
+    {
+      "type": "text",
+      "id": "vision_text",
+      "label": "Vision text",
+      "default": "Tisso vision in the wild"
+    }
+  ],
   "blocks": [
     {
       "type": "product",
