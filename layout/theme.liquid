@@ -141,28 +141,40 @@
         const body = JSON.parse(options.body || '{}');
         if (!body.id) return response;
 
-        // 1️⃣ Variant info
-        const variantRes = await originalFetch(`/variants/${body.id}.json`);
-        if (!variantRes.ok) return response;
+        // 1️⃣ Get cart after add
+        const cart = await originalFetch('/cart.js').then(r => r.json());
 
-        const variantData = await variantRes.json();
-        const title = variantData.variant.title.toLowerCase();
+        const addedItem = cart.items.find(
+          item => item.variant_id == body.id
+        );
 
-        // 2️⃣ Check Black + Medium
-        if (!title.includes('black') || !title.includes('medium')) {
+        if (!addedItem) {
           openHorizonDrawer();
           return response;
         }
 
-        // 3️⃣ Get cart
-        const cart = await originalFetch('/cart.js').then(r => r.json());
+        // 2️⃣ Check Black + Medium
+        const optionsSelected = [
+          addedItem.option1,
+          addedItem.option2,
+          addedItem.option3
+        ].map(v => (v || '').toLowerCase());
 
+        if (
+          !optionsSelected.includes('black') ||
+          !optionsSelected.includes('medium')
+        ) {
+          openHorizonDrawer();
+          return response;
+        }
+
+        // 3️⃣ Prevent duplicate bundle
         const alreadyAdded = cart.items.some(
           item => item.handle === 'dark-winter-jacket'
         );
 
         if (!alreadyAdded) {
-          // 4️⃣ Bundle product
+          // 4️⃣ Fetch bundle product
           const productRes = await originalFetch('/products/dark-winter-jacket.js');
           if (!productRes.ok) return response;
 
@@ -181,7 +193,7 @@
           }
         }
 
-        // 5️⃣ Open Horizon drawer
+        // 5️⃣ Open Horizon cart drawer
         openHorizonDrawer();
 
       } catch (err) {
@@ -212,6 +224,7 @@
   }
 })();
 </script>
+
 
 
   </body>
