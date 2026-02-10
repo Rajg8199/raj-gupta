@@ -546,6 +546,7 @@
   const modalContent = modal.querySelector('.quick-view-modal__content');
   const closeBtn = modal.querySelector('.quick-view-modal__close');
   const form = document.getElementById(`quick-view-form-${sectionId}`);
+  let cachedBundleVariantId = null;
   
   // Product data storage
   const products = {
@@ -770,27 +771,31 @@
     }
   });
 
-  function shouldAddBundle() {
-    if (!currentProduct.bundleVariantCheck || !currentProduct.bundleProductHandle) {
-      return false;
-    }
+function shouldAddBundle() {
+  if (!currentProduct.bundleVariantCheck) return false;
 
-    // Check if selected variant matches bundle criteria
-    const checks = currentProduct.bundleVariantCheck.split(',').map(s => s.trim().toLowerCase());
-    const selectedValues = Object.values(selectedOptions).map(v => v.toLowerCase());
-    
-    return checks.every(check => selectedValues.includes(check));
+  const required = currentProduct.bundleVariantCheck
+    .split(',')
+    .map(v => v.trim().toLowerCase());
+
+  const selected = Object.values(selectedOptions)
+    .filter(Boolean)
+    .map(v => v.toLowerCase());
+
+  return required.every(val => selected.includes(val));
+}
+
+
+async function addBundleProduct() {
+  if (!cachedBundleVariantId) {
+    const res = await fetch(`/products/${currentProduct.bundleProductHandle}.js`);
+    const data = await res.json();
+    cachedBundleVariantId = data.variants[0].id;
   }
 
-  async function addBundleProduct() {
-    // Fetch bundle product
-    const response = await fetch(`/products/${currentProduct.bundleProductHandle}.js`);
-    const bundleProduct = await response.json();
-    
-    if (bundleProduct && bundleProduct.variants && bundleProduct.variants[0]) {
-      await addToCart(bundleProduct.variants[0].id, 1);
-    }
-  }
+  return addToCart(cachedBundleVariantId, 1);
+}
+
 
   async function addToCart(variantId, quantity) {
     const response = await fetch('/cart/add.js', {
