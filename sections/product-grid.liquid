@@ -555,7 +555,7 @@
             id: {{ product.id }},
             title: {{ product.title | json }},
             price: {{ product.price | json }},
-            priceFormatted: {{ product.price | money | json }},
+            priceFormatted: {{ product.price }},
             description: {{ product.description | strip_html | truncate: 150 | json }},
             image: {{ product.featured_image | image_url: width: 800 | json }},
             variants: [
