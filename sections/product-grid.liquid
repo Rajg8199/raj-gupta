@@ -849,13 +849,13 @@ async function addBundleProduct() {
   const cart = await fetch('/cart.js').then(r => r.json());
 
   // If jacket already exists → stop
-  if (cart.items.some(item => item.handle === 'soft-winter-jacket')) {
+  if (cart.items.some(item => item.handle === 'dark-winter-jacket')) {
     return;
   }
 
   // Fetch bundle product
   if (!cachedBundleVariantId) {
-    const res = await fetch('/products/soft-winter-jacket.js');
+    const res = await fetch('/products/dark-winter-jacket.js');
     if (!res.ok) return;
 
     const data = await res.json();
