@@ -815,14 +815,9 @@ async function addBundleProduct() {
     return response.json();
   }
 
-function formatMoney(cents) {
-    var moneyFormat = {{ shop.money_format | json }};
-    return moneyFormat.replace(
-      '{{amount}}',
-      (cents / 100).toFixed(2)
-    );
+  function formatMoney(cents) {
+    return '{{ shop.money_format }}'.replace('{{amount}}', (cents / 100).toFixed(2));
   }
-
 })();
 </script>
 
