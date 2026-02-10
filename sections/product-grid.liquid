@@ -817,8 +817,7 @@ function updateVariant() {
         addToCartBtn.disabled = false;
       }, 1000);
 
-      // Trigger cart refresh (if using theme cart)
-      document.documentElement.dispatchEvent(new CustomEvent('cart:refresh'));
+    
       
     } catch (error) {
       console.error('Error adding to cart:', error);
@@ -846,17 +845,28 @@ function shouldAddBundle() {
 
 
 async function addBundleProduct() {
+  // Fetch cart first
+  const cart = await fetch('/cart.js').then(r => r.json());
+
+  // If jacket already exists → stop
+  if (cart.items.some(item => item.handle === 'soft-winter-jacket')) {
+    return;
+  }
+
+  // Fetch bundle product
   if (!cachedBundleVariantId) {
-    const res = await fetch(`/products/${currentProduct.bundleProductHandle}.js`);
-    if (!res.ok) throw new Error('Bundle product not found');
+    const res = await fetch('/products/soft-winter-jacket.js');
+    if (!res.ok) return;
 
     const data = await res.json();
     cachedBundleVariantId = data.variants.find(v => v.available)?.id;
   }
 
   if (!cachedBundleVariantId) return;
+
   return addToCart(cachedBundleVariantId, 1);
 }
+
 
 
   async function addToCart(variantId, quantity) {
