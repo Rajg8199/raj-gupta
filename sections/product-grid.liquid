@@ -813,9 +813,9 @@ async function addBundleProduct() {
     return response.json();
   }
 
-  {% comment %} function formatMoney(cents) {
+  function formatMoney(cents) {
     return '{{ shop.money_format }}'.replace('{{amount}}', (cents / 100).toFixed(2));
-  } {% endcomment %}
+  }
 })();
 </script>
 
