@@ -564,6 +564,23 @@ h2.product-grid__heading {
   const closeBtn = modal.querySelector('.quick-view-modal__close');
   const form = document.getElementById(`quick-view-form-${sectionId}`);
 
+  /* -------------------------------
+     COLOR MAP (UI ONLY)
+  -------------------------------- */
+  const colorMap = {
+    black:'#000', white:'#fff', grey:'#808080', gray:'#808080',
+    red:'#f00', blue:'#00f', green:'#080', yellow:'#ff0',
+    orange:'#fa0', purple:'#800080', pink:'#ffc0cb',
+    brown:'#a52a2a', beige:'#f5f5dc', navy:'#000080',
+    maroon:'#800000', olive:'#808000', teal:'#008080',
+    silver:'#c0c0c0', gold:'#ffd700', cream:'#fffdd0'
+  };
+
+  const getColorHex = c => colorMap[c.toLowerCase()] || '#e0e0e0';
+
+  /* -------------------------------
+     PRODUCT DATA
+  -------------------------------- */
   const products = {
     {%- for block in section.blocks -%}
       {%- if block.type == 'product' and block.settings.product != blank -%}
@@ -580,6 +597,7 @@ h2.product-grid__heading {
             option1: {{ v.option1 | json }},
             option2: {{ v.option2 | json }},
             option3: {{ v.option3 | json }},
+            price: {{ v.price }},
             available: {{ v.available | json }}
           }{% unless forloop.last %},{% endunless %}
           {%- endfor -%}
@@ -601,12 +619,11 @@ h2.product-grid__heading {
   let currentProduct = null;
   let selectedOptions = {};
 
-  /* OPEN QUICK VIEW */
+  /* -------------------------------
+     OPEN QUICK VIEW
+  -------------------------------- */
   document.querySelectorAll('[data-quick-view-trigger]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const productId = btn.getAttribute('data-quick-view-trigger');
-      openQuickView(productId);
-    });
+    btn.addEventListener('click', () => openQuickView(btn.dataset.quickViewTrigger));
   });
 
   function openQuickView(productId) {
@@ -625,15 +642,22 @@ h2.product-grid__heading {
     document.body.classList.add('modal-open');
   }
 
+  /* -------------------------------
+     CLOSE MODAL
+  -------------------------------- */
   closeBtn.onclick = closeModal;
   modal.onclick = e => e.target === modal && closeModal();
 
   function closeModal() {
     modal.classList.remove('active');
     document.body.classList.remove('modal-open');
+    currentProduct = null;
     selectedOptions = {};
   }
 
+  /* -------------------------------
+     RENDER OPTIONS (NO DEFAULT SELECT)
+  -------------------------------- */
   function renderOptions() {
     const colorWrap = document.getElementById(`color-option-${sectionId}`);
     const sizeWrap = document.getElementById(`size-option-${sectionId}`);
@@ -655,6 +679,7 @@ h2.product-grid__heading {
           btn.type = 'button';
           btn.className = 'quick-view-modal__color-option';
           btn.textContent = value;
+          btn.style.setProperty('--color-value', getColorHex(value));
 
           btn.onclick = () => {
             grid.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
@@ -662,7 +687,6 @@ h2.product-grid__heading {
             selectedOptions[`option${option.position}`] = value;
             updateVariant();
           };
-
           grid.appendChild(btn);
         });
       }
@@ -685,6 +709,9 @@ h2.product-grid__heading {
     updateVariant();
   }
 
+  /* -------------------------------
+     VARIANT MATCHING
+  -------------------------------- */
   function updateVariant() {
     const btn = document.getElementById(`add-to-cart-btn-${sectionId}`);
     const variant = currentProduct.variants.find(v =>
@@ -702,23 +729,25 @@ h2.product-grid__heading {
     }
   }
 
-  /* ADD TO CART */
+  /* -------------------------------
+     ADD TO CART (SIMPLE)
+  -------------------------------- */
   form.addEventListener('submit', async e => {
     e.preventDefault();
     const id = document.getElementById(`variant-id-${sectionId}`).value;
     if (!id) return alert('Please select all options');
 
     await fetch('/cart/add.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, quantity: 1 })
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ id, quantity:1 })
     });
 
     closeModal();
   });
+
 })();
 </script>
-
 
 
 {% schema %}
