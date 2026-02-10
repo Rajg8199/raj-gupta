@@ -1,0 +1,782 @@
+
+<style>
+  /* ========================================
+     CSS Reset & Base Styles
+     ======================================== */
+  .product-grid-section {
+    position: relative;
+    width: 100%;
+    background-color: #000000;
+    padding: 0;
+    margin: 0;
+  }
+
+  .product-grid-section * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /* ========================================
+     Grid Container
+     ======================================== */
+  .product-grid__container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    max-width: 100%;
+  }
+
+  /* ========================================
+     Product Card
+     ======================================== */
+  .product-card {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    cursor: pointer;
+    background-color: #f5f5f5;
+  }
+
+  .product-card__image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .product-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .product-card:hover .product-card__image {
+    transform: scale(1.05);
+  }
+
+  /* Quick View Button */
+  .product-card__quick-view {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    z-index: 2;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .product-card:hover .product-card__quick-view {
+    opacity: 1;
+  }
+
+  .product-card__quick-view:hover {
+    background-color: #ffffff;
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .product-card__quick-view svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* ========================================
+     Quick View Modal
+     ======================================== */
+  .quick-view-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .quick-view-modal.active {
+    display: flex;
+    opacity: 1;
+  }
+
+  .quick-view-modal__content {
+    background-color: #ffffff;
+    width: 90%;
+    max-width: 380px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    border-radius: 0;
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  }
+
+  .quick-view-modal.active .quick-view-modal__content {
+    transform: scale(1);
+  }
+
+  /* Close Button */
+  .quick-view-modal__close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+  }
+
+  .quick-view-modal__close:hover {
+    transform: rotate(90deg);
+  }
+
+  .quick-view-modal__close svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Product Image in Modal */
+  .quick-view-modal__image-wrapper {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background-color: #f5f5f5;
+  }
+
+  .quick-view-modal__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Product Details */
+  .quick-view-modal__details {
+    padding: 24px;
+  }
+
+  .quick-view-modal__title {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+
+  .quick-view-modal__price {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 16px;
+  }
+
+  .quick-view-modal__description {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #666666;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+
+  /* Variant Options */
+  .quick-view-modal__option {
+    margin-bottom: 20px;
+  }
+
+  .quick-view-modal__option-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  /* Color Swatches */
+  .quick-view-modal__color-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .quick-view-modal__color-option {
+    position: relative;
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    background-color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a1a1a;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  .quick-view-modal__color-option:hover {
+    border-color: #1a1a1a;
+  }
+
+  .quick-view-modal__color-option.selected {
+    border-color: #1a1a1a;
+    border-width: 3px;
+    background-color: #1a1a1a;
+    color: #ffffff;
+  }
+
+  /* Size Dropdown */
+  .quick-view-modal__size-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #e0e0e0;
+    background-color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a1a1a;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231a1a1a' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
+  }
+
+  .quick-view-modal__size-select:focus {
+    outline: none;
+    border-color: #1a1a1a;
+  }
+
+  /* Add to Cart Button */
+  .quick-view-modal__add-to-cart {
+    width: 100%;
+    padding: 16px;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    border: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .quick-view-modal__add-to-cart:hover:not(:disabled) {
+    background-color: #2d2d2d;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .quick-view-modal__add-to-cart:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+
+  .quick-view-modal__add-to-cart svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+
+  /* Loading State */
+  .quick-view-modal__add-to-cart.loading {
+    pointer-events: none;
+  }
+
+  .quick-view-modal__add-to-cart.loading::after {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ========================================
+     Mobile Responsive
+     ======================================== */
+  @media screen and (max-width: 989px) {
+    .product-grid__container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .quick-view-modal__content {
+      max-width: 95%;
+    }
+
+    .quick-view-modal__details {
+      padding: 20px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .quick-view-modal__title {
+      font-size: 16px;
+    }
+
+    .quick-view-modal__price {
+      font-size: 15px;
+    }
+
+    .quick-view-modal__description {
+      font-size: 13px;
+    }
+
+    .quick-view-modal__details {
+      padding: 16px;
+    }
+  }
+
+  /* ========================================
+     Utility Classes
+     ======================================== */
+  .hidden {
+    display: none !important;
+  }
+
+  body.modal-open {
+    overflow: hidden;
+  }
+</style>
+
+<section class="product-grid-section" id="product-grid-{{ section.id }}">
+  <div class="product-grid__container">
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'product' -%}
+        {%- assign product = block.settings.product -%}
+        {%- if product != blank -%}
+          <div class="product-card" data-product-id="{{ product.id }}" data-block-id="{{ block.id }}">
+            <div class="product-card__image-wrapper">
+              {%- if product.featured_image -%}
+                <img 
+                  class="product-card__image"
+                  src="{{ product.featured_image | image_url: width: 800 }}"
+                  alt="{{ product.featured_image.alt | escape }}"
+                  loading="lazy"
+                >
+              {%- endif -%}
+              
+              <button 
+                class="product-card__quick-view" 
+                type="button"
+                aria-label="Quick view {{ product.title }}"
+                data-quick-view-trigger="{{ product.id }}"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="M21 21l-4.35-4.35"/>
+                  <circle cx="11" cy="11" r="3"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</section>
+
+<!-- Quick View Modal -->
+<div class="quick-view-modal" id="quick-view-modal-{{ section.id }}">
+  <div class="quick-view-modal__content">
+    <button class="quick-view-modal__close" type="button" aria-label="Close">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+
+    <div class="quick-view-modal__image-wrapper">
+      <img class="quick-view-modal__image" src="" alt="" id="modal-image-{{ section.id }}">
+    </div>
+
+    <div class="quick-view-modal__details">
+      <h2 class="quick-view-modal__title" id="modal-title-{{ section.id }}"></h2>
+      <p class="quick-view-modal__price" id="modal-price-{{ section.id }}"></p>
+      <p class="quick-view-modal__description" id="modal-description-{{ section.id }}"></p>
+
+      <form id="quick-view-form-{{ section.id }}" class="quick-view-modal__form">
+        <!-- Color Options -->
+        <div class="quick-view-modal__option" id="color-option-{{ section.id }}"></div>
+
+        <!-- Size Options -->
+        <div class="quick-view-modal__option" id="size-option-{{ section.id }}"></div>
+
+        <!-- Hidden variant ID -->
+        <input type="hidden" name="id" id="variant-id-{{ section.id }}">
+
+        <!-- Add to Cart Button -->
+        <button 
+          type="submit" 
+          class="quick-view-modal__add-to-cart"
+          id="add-to-cart-btn-{{ section.id }}"
+        >
+          <span>Add to Cart</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/>
+          </svg>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const sectionId = '{{ section.id }}';
+  const modal = document.getElementById(`quick-view-modal-${sectionId}`);
+  const modalContent = modal.querySelector('.quick-view-modal__content');
+  const closeBtn = modal.querySelector('.quick-view-modal__close');
+  const form = document.getElementById(`quick-view-form-${sectionId}`);
+  
+  // Product data storage
+  const products = {
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'product' -%}
+        {%- assign product = block.settings.product -%}
+        {%- if product != blank -%}
+          '{{ product.id }}': {
+            id: {{ product.id }},
+            title: {{ product.title | json }},
+            price: {{ product.price | json }},
+            priceFormatted: {{ product.price | money | json }},
+            description: {{ product.description | strip_html | truncate: 150 | json }},
+            image: {{ product.featured_image | image_url: width: 800 | json }},
+            variants: [
+              {%- for variant in product.variants -%}
+                {
+                  id: {{ variant.id }},
+                  title: {{ variant.title | json }},
+                  price: {{ variant.price | json }},
+                  available: {{ variant.available | json }},
+                  option1: {{ variant.option1 | json }},
+                  option2: {{ variant.option2 | json }},
+                  option3: {{ variant.option3 | json }}
+                }{%- unless forloop.last -%},{%- endunless -%}
+              {%- endfor -%}
+            ],
+            options: [
+              {%- for option in product.options_with_values -%}
+                {
+                  name: {{ option.name | json }},
+                  position: {{ option.position }},
+                  values: {{ option.values | json }}
+                }{%- unless forloop.last -%},{%- endunless -%}
+              {%- endfor -%}
+            ],
+            bundleVariantCheck: {{ block.settings.bundle_variant_check | json }},
+            bundleProductHandle: {{ block.settings.bundle_product_handle | json }}
+          }{%- unless forloop.last -%},{%- endunless -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+  };
+
+  let currentProduct = null;
+  let selectedOptions = {};
+
+  // Open modal
+  document.querySelectorAll('[data-quick-view-trigger]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const productId = btn.getAttribute('data-quick-view-trigger');
+      openQuickView(productId);
+    });
+  });
+
+  // Close modal
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  // Close on escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      closeModal();
+    }
+  });
+
+  function openQuickView(productId) {
+    currentProduct = products[productId];
+    if (!currentProduct) return;
+
+    // Set product details
+    document.getElementById(`modal-title-${sectionId}`).textContent = currentProduct.title;
+    document.getElementById(`modal-price-${sectionId}`).textContent = currentProduct.priceFormatted;
+    document.getElementById(`modal-description-${sectionId}`).textContent = currentProduct.description;
+    document.getElementById(`modal-image-${sectionId}`).src = currentProduct.image;
+    document.getElementById(`modal-image-${sectionId}`).alt = currentProduct.title;
+
+    // Reset selected options
+    selectedOptions = {};
+
+    // Render options
+    renderOptions();
+
+    // Show modal
+    modal.classList.add('active');
+    document.body.classList.add('modal-open');
+  }
+
+  function closeModal() {
+    modal.classList.remove('active');
+    document.body.classList.remove('modal-open');
+    currentProduct = null;
+    selectedOptions = {};
+  }
+
+  function renderOptions() {
+    const colorContainer = document.getElementById(`color-option-${sectionId}`);
+    const sizeContainer = document.getElementById(`size-option-${sectionId}`);
+
+    colorContainer.innerHTML = '';
+    sizeContainer.innerHTML = '';
+
+    currentProduct.options.forEach((option, index) => {
+      const optionName = option.name.toLowerCase();
+      
+      if (optionName === 'color' || optionName === 'colour') {
+        // Render color swatches
+        colorContainer.innerHTML = `
+          <label class="quick-view-modal__option-label">Color</label>
+          <div class="quick-view-modal__color-grid" id="color-grid-${sectionId}"></div>
+        `;
+
+        const colorGrid = document.getElementById(`color-grid-${sectionId}`);
+        option.values.forEach(value => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'quick-view-modal__color-option';
+          btn.textContent = value;
+          btn.dataset.optionValue = value;
+          btn.dataset.optionPosition = option.position;
+
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.quick-view-modal__color-option').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedOptions[`option${option.position}`] = value;
+            updateVariant();
+          });
+
+          colorGrid.appendChild(btn);
+        });
+
+        // Auto-select first color
+        if (option.values.length > 0) {
+          selectedOptions[`option${option.position}`] = option.values[0];
+          colorGrid.querySelector('.quick-view-modal__color-option').classList.add('selected');
+        }
+
+      } else if (optionName === 'size') {
+        // Render size dropdown
+        sizeContainer.innerHTML = `
+          <label class="quick-view-modal__option-label">Size</label>
+          <select class="quick-view-modal__size-select" id="size-select-${sectionId}" required>
+            <option value="">Choose your size</option>
+            ${option.values.map(value => `<option value="${value}">${value}</option>`).join('')}
+          </select>
+        `;
+
+        const sizeSelect = document.getElementById(`size-select-${sectionId}`);
+        sizeSelect.addEventListener('change', (e) => {
+          selectedOptions[`option${option.position}`] = e.target.value;
+          updateVariant();
+        });
+      }
+    });
+
+    updateVariant();
+  }
+
+  function updateVariant() {
+    const variant = currentProduct.variants.find(v => {
+      return (
+        (!selectedOptions.option1 || v.option1 === selectedOptions.option1) &&
+        (!selectedOptions.option2 || v.option2 === selectedOptions.option2) &&
+        (!selectedOptions.option3 || v.option3 === selectedOptions.option3)
+      );
+    });
+
+    if (variant) {
+      document.getElementById(`variant-id-${sectionId}`).value = variant.id;
+      document.getElementById(`modal-price-${sectionId}`).textContent = formatMoney(variant.price);
+      
+      const addToCartBtn = document.getElementById(`add-to-cart-btn-${sectionId}`);
+      addToCartBtn.disabled = !variant.available;
+      addToCartBtn.querySelector('span').textContent = variant.available ? 'Add to Cart' : 'Sold Out';
+    }
+  }
+
+  // Form submission
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const variantId = document.getElementById(`variant-id-${sectionId}`).value;
+    if (!variantId) {
+      alert('Please select all options');
+      return;
+    }
+
+    const addToCartBtn = document.getElementById(`add-to-cart-btn-${sectionId}`);
+    addToCartBtn.classList.add('loading');
+    addToCartBtn.disabled = true;
+
+    try {
+      // Add main product to cart
+      await addToCart(variantId, 1);
+
+      // Check for bundle
+      if (shouldAddBundle()) {
+        await addBundleProduct();
+      }
+
+      // Success feedback
+      addToCartBtn.classList.remove('loading');
+      addToCartBtn.querySelector('span').textContent = 'Added!';
+      
+      setTimeout(() => {
+        closeModal();
+        addToCartBtn.querySelector('span').textContent = 'Add to Cart';
+        addToCartBtn.disabled = false;
+      }, 1000);
+
+      // Trigger cart refresh (if using theme cart)
+      document.documentElement.dispatchEvent(new CustomEvent('cart:refresh'));
+      
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Error adding to cart. Please try again.');
+      addToCartBtn.classList.remove('loading');
+      addToCartBtn.disabled = false;
+    }
+  });
+
+  function shouldAddBundle() {
+    if (!currentProduct.bundleVariantCheck || !currentProduct.bundleProductHandle) {
+      return false;
+    }
+
+    // Check if selected variant matches bundle criteria
+    const checks = currentProduct.bundleVariantCheck.split(',').map(s => s.trim().toLowerCase());
+    const selectedValues = Object.values(selectedOptions).map(v => v.toLowerCase());
+    
+    return checks.every(check => selectedValues.includes(check));
+  }
+
+  async function addBundleProduct() {
+    // Fetch bundle product
+    const response = await fetch(`/products/${currentProduct.bundleProductHandle}.js`);
+    const bundleProduct = await response.json();
+    
+    if (bundleProduct && bundleProduct.variants && bundleProduct.variants[0]) {
+      await addToCart(bundleProduct.variants[0].id, 1);
+    }
+  }
+
+  async function addToCart(variantId, quantity) {
+    const response = await fetch('/cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: variantId,
+        quantity: quantity
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to add to cart');
+    }
+
+    return response.json();
+  }
+
+  function formatMoney(cents) {
+    return '{{ shop.money_format }}'.replace('{{amount}}', (cents / 100).toFixed(2));
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Product Grid",
+  "tag": "section",
+  "class": "section-product-grid",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "header",
+          "content": "Auto-Bundle Settings"
+        },
+        {
+          "type": "text",
+          "id": "bundle_variant_check",
+          "label": "Bundle trigger variants",
+          "info": "Enter variant options separated by commas (e.g., 'Black, Medium'). When this product is added with these options, the bundle product will be added automatically.",
+          "placeholder": "Black, Medium"
+        },
+        {
+          "type": "text",
+          "id": "bundle_product_handle",
+          "label": "Bundle product handle",
+          "info": "The handle of the product to add automatically (e.g., 'soft-winter-jacket')"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Grid",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
