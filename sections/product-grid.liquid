@@ -562,7 +562,7 @@ h2.product-grid__heading {
   const modalContent = modal.querySelector('.quick-view-modal__content');
   const closeBtn = modal.querySelector('.quick-view-modal__close');
   const form = document.getElementById(`quick-view-form-${sectionId}`);
-  let cachedBundleVariantId = null;
+  const bundleVariantCache = {};
   
   // Color mapping for variant display
   const colorMap = {
@@ -768,7 +768,6 @@ function updateVariant() {
 
   if (variant && Object.keys(selectedOptions).length === currentProduct.options.length) {
     document.getElementById(`variant-id-${sectionId}`).value = variant.id;
-    // FIX: Use priceFormatted instead of raw price
     document.getElementById(`modal-price-${sectionId}`).textContent = variant.priceFormatted;
 
     addToCartBtn.disabled = !variant.available;
@@ -776,7 +775,6 @@ function updateVariant() {
       ? 'Add to Cart'
       : 'Sold Out';
   } else {
-    // ❗ No full selection yet
     document.getElementById(`variant-id-${sectionId}`).value = '';
     addToCartBtn.disabled = true;
     addToCartBtn.querySelector('span').textContent = 'Add to Cart';
@@ -799,27 +797,82 @@ function updateVariant() {
     addToCartBtn.disabled = true;
 
     try {
+      console.log('🛒 Adding main product to cart...');
+      
       // Add main product to cart
       await addToCart(variantId, 1);
+      console.log('✅ Main product added');
 
       // Check for bundle
-      if (shouldAddBundle()) {
+      const shouldBundle = shouldAddBundle();
+      console.log('🔍 Should add bundle?', shouldBundle);
+      console.log('📦 Bundle config:', {
+        check: currentProduct.bundleVariantCheck,
+        handle: currentProduct.bundleProductHandle,
+        selectedOptions: selectedOptions
+      });
+
+      if (shouldBundle) {
+        console.log('📦 Adding bundle product...');
         await addBundleProduct();
+        console.log('✅ Bundle product added');
       }
 
       // Success feedback
       addToCartBtn.classList.remove('loading');
       addToCartBtn.querySelector('span').textContent = 'Added!';
       
-      // FIX: Trigger cart drawer refresh
-      document.dispatchEvent(new CustomEvent('cart:refresh'));
+      // FIX: Force cart refresh with multiple methods
+      console.log('🔄 Triggering cart refresh...');
       
-      // Also try triggering Shopify's native cart update event
-      if (window.Shopify && window.Shopify.theme) {
-        document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', {
-          bubbles: true
-        }));
+      // Method 1: Shopify Section Rendering API
+      fetch(window.location.href + '?sections=cart-drawer,cart-icon-bubble')
+        .then(response => response.json())
+        .then(sections => {
+          if (sections['cart-drawer']) {
+            const cartDrawer = document.querySelector('cart-drawer');
+            if (cartDrawer) {
+              cartDrawer.getSectionsToRender().forEach((section) => {
+                const sectionElement = document.getElementById(section.id);
+                if (sectionElement) {
+                  sectionElement.innerHTML = sections[section.section];
+                }
+              });
+            }
+          }
+          if (sections['cart-icon-bubble']) {
+            const cartBubble = document.querySelector('.cart-count-bubble');
+            if (cartBubble) {
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(sections['cart-icon-bubble'], 'text/html');
+              const newBubble = doc.querySelector('.cart-count-bubble');
+              if (newBubble) {
+                cartBubble.innerHTML = newBubble.innerHTML;
+              }
+            }
+          }
+        })
+        .catch(error => console.error('Section refresh error:', error));
+      
+      // Method 2: Custom events
+      document.dispatchEvent(new CustomEvent('cart:refresh'));
+      document.body.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
+      
+      // Method 3: Trigger drawer open (if using Shopify's default drawer)
+      const cartDrawer = document.querySelector('cart-drawer');
+      if (cartDrawer && typeof cartDrawer.open === 'function') {
+        setTimeout(() => cartDrawer.open(), 100);
       }
+      
+      // Method 4: Update cart count manually
+      fetch('/cart.js')
+        .then(r => r.json())
+        .then(cart => {
+          const cartCount = document.querySelector('.cart-count-bubble span, [data-cart-count]');
+          if (cartCount) {
+            cartCount.textContent = cart.item_count;
+          }
+        });
 
       setTimeout(() => {
         closeModal();
@@ -828,7 +881,7 @@ function updateVariant() {
       }, 1000);
 
     } catch (error) {
-      console.error('Error adding to cart:', error);
+      console.error('❌ Error adding to cart:', error);
       alert('Error adding to cart. Please try again.');
       addToCartBtn.classList.remove('loading');
       addToCartBtn.disabled = false;
@@ -836,46 +889,71 @@ function updateVariant() {
   });
 
 function shouldAddBundle() {
+  // If no bundle settings, return false
   if (!currentProduct.bundleVariantCheck || !currentProduct.bundleProductHandle) {
+    console.log('❌ No bundle settings configured');
     return false;
   }
 
+  // Split and normalize the required variants
   const required = currentProduct.bundleVariantCheck
     .split(',')
     .map(v => v.trim().toLowerCase());
 
+  // Get all selected option values and normalize
   const selected = Object.values(selectedOptions)
     .filter(Boolean)
     .map(v => v.trim().toLowerCase());
 
+  console.log('Bundle check:', {
+    required: required,
+    selected: selected,
+    matches: required.every(req => selected.includes(req))
+  });
+
+  // Check if ALL required variants are selected
   return required.every(req => selected.includes(req));
 }
 
 
 async function addBundleProduct() {
-  // Fetch cart first
-  const cart = await fetch('/cart.js').then(r => r.json());
-
-  // FIX: Use the correct handle from bundle_product_handle setting
   const bundleHandle = currentProduct.bundleProductHandle;
   
-  // If jacket already exists → stop
+  console.log('📦 Fetching bundle product:', bundleHandle);
+  
+  // Check if already in cart
+  const cart = await fetch('/cart.js').then(r => r.json());
+  console.log('🛒 Current cart:', cart.items.map(i => i.handle));
+  
   if (cart.items.some(item => item.handle === bundleHandle)) {
+    console.log('⚠️ Bundle product already in cart');
     return;
   }
 
-  // Fetch bundle product
-  if (!cachedBundleVariantId) {
+  // Get variant ID (use cache to avoid repeated fetches)
+  if (!bundleVariantCache[bundleHandle]) {
+    console.log('🔍 Fetching product data for:', bundleHandle);
     const res = await fetch(`/products/${bundleHandle}.js`);
-    if (!res.ok) return;
+    
+    if (!res.ok) {
+      console.error('❌ Failed to fetch bundle product');
+      return;
+    }
 
     const data = await res.json();
-    cachedBundleVariantId = data.variants.find(v => v.available)?.id;
+    const availableVariant = data.variants.find(v => v.available);
+    
+    if (!availableVariant) {
+      console.error('❌ No available variant for bundle product');
+      return;
+    }
+    
+    bundleVariantCache[bundleHandle] = availableVariant.id;
+    console.log('✅ Bundle variant ID:', availableVariant.id);
   }
 
-  if (!cachedBundleVariantId) return;
-
-  return addToCart(cachedBundleVariantId, 1);
+  console.log('➕ Adding bundle to cart...');
+  return addToCart(bundleVariantCache[bundleHandle], 1);
 }
 
 
@@ -893,7 +971,8 @@ async function addBundleProduct() {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to add to cart');
+      const error = await response.json();
+      throw new Error(error.description || 'Failed to add to cart');
     }
 
     return response.json();
@@ -902,7 +981,6 @@ async function addBundleProduct() {
   
 
   function formatMoney(cents) {
-    // FIX: Properly format money without showing template literals
     const amount = (cents / 100).toFixed(2);
     return '{{ shop.money_format }}'.replace('{{amount}}', amount).replace('{{ amount }}', amount);
   }
