@@ -1,37 +1,57 @@
 <style>
-/* ===============================
-   GRID
-================================ */
+/* ========================================
+   CSS Reset & Base Styles
+======================================== */
 .product-grid-section {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
   max-width: 1440px;
-  margin: auto;
-  padding: 80px 48px 0;
+  display: flex;
+  padding: 90px 52px 0 52px;
+  gap: 30px;
+  flex-direction: column;
 }
 
-.product-grid__heading {
+.product-grid-section * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+h2.product-grid__heading {
   font-size: 36px;
-  margin-bottom: 40px;
+  line-height: 120%;
+  font-family: 'Jost-Regular', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
 }
 
+/* ========================================
+   GRID
+======================================== */
 .product-grid__container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
 }
 
-/* ===============================
+/* ========================================
    PRODUCT CARD
-================================ */
+======================================== */
 .product-card {
   position: relative;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 1/1;
   overflow: hidden;
-  cursor: pointer;
+  background: #f5f5f5;
 }
 
-.product-card img {
+.product-card__image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform .4s ease;
+}
+
+.product-card:hover .product-card__image {
+  transform: scale(1.05);
 }
 
 .product-card__quick-view {
@@ -40,9 +60,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,.6);
   opacity: 0;
-  transition: opacity .3s;
+  transition: opacity .3s ease;
 }
 
 .product-card:hover .product-card__quick-view {
@@ -58,9 +77,9 @@
   cursor: pointer;
 }
 
-/* ===============================
+/* ========================================
    MODAL
-================================ */
+======================================== */
 .quick-view-modal {
   position: fixed;
   inset: 0;
@@ -76,25 +95,26 @@
 }
 
 .quick-view-modal__content {
-  background: #fff;
   width: 380px;
   max-height: 90vh;
+  background: #fff;
   overflow-y: auto;
   position: relative;
 }
 
+/* Close */
 .quick-view-modal__close {
   position: absolute;
   top: 16px;
   right: 16px;
-  background: none;
   border: none;
+  background: none;
   cursor: pointer;
 }
 
-/* ===============================
-   MODAL TOP (PIXEL PERFECT)
-================================ */
+/* ========================================
+   🔥 FIXED MODAL LAYOUT (FIGMA MATCH)
+======================================== */
 .quick-view-modal__top {
   display: grid;
   grid-template-columns: 120px 1fr;
@@ -116,70 +136,74 @@
 
 .quick-view-modal__title {
   font-size: 18px;
+  font-weight: 500;
 }
 
 .quick-view-modal__price {
   font-size: 16px;
+  font-weight: 500;
 }
 
 .quick-view-modal__description {
   font-size: 14px;
+  line-height: 1.4;
   color: #666;
 }
 
-/* ===============================
+/* ========================================
    OPTIONS
-================================ */
+======================================== */
 .quick-view-modal__details {
   padding: 24px;
 }
 
-.option-label {
+.quick-view-modal__option-label {
   font-size: 13px;
+  font-weight: 600;
   margin-bottom: 8px;
 }
 
-.color-grid {
+.quick-view-modal__color-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
 
-.color-btn {
-  border: 2px solid #ddd;
-  padding: 10px;
+.quick-view-modal__color-option {
+  padding: 12px;
+  border: 2px solid #e0e0e0;
   background: #fff;
   cursor: pointer;
 }
 
-.color-btn.active {
+.quick-view-modal__color-option.selected {
   background: #000;
   color: #fff;
   border-color: #000;
 }
 
-select {
+.quick-view-modal__size-select {
   width: 100%;
   padding: 12px;
-  border: 1px solid #ddd;
+  border: 1px solid #e0e0e0;
 }
 
-/* ===============================
+/* ========================================
    ADD TO CART
-================================ */
-.add-to-cart {
+======================================== */
+.quick-view-modal__add-to-cart {
   width: 100%;
   padding: 16px;
+  margin-top: 24px;
   background: #000;
   color: #fff;
   border: none;
-  margin-top: 24px;
   cursor: pointer;
 }
 
-/* ===============================
+/* ========================================
    MOBILE
-================================ */
+======================================== */
 @media(max-width: 749px){
   .product-grid__container {
     grid-template-columns: repeat(2,1fr);
@@ -203,9 +227,9 @@ select {
       {% assign product = block.settings.product %}
       {% if product %}
         <div class="product-card">
-          <img src="{{ product.featured_image | image_url: width: 800 }}">
+          <img class="product-card__image" src="{{ product.featured_image | image_url: width: 800 }}">
           <div class="product-card__quick-view">
-            <button data-open="{{ product.id }}">+</button>
+            <button data-product-id="{{ product.id }}">+</button>
           </div>
         </div>
       {% endif %}
@@ -214,7 +238,7 @@ select {
 </section>
 
 <!-- MODAL -->
-<div class="quick-view-modal" id="quickView">
+<div class="quick-view-modal" id="quickViewModal">
   <div class="quick-view-modal__content">
     <button class="quick-view-modal__close">✕</button>
 
@@ -223,26 +247,31 @@ select {
       <div class="quick-view-modal__info">
         <h2 id="qvTitle"></h2>
         <p id="qvPrice"></p>
-        <p id="qvDesc"></p>
+        <p id="qvDescription"></p>
       </div>
     </div>
 
     <div class="quick-view-modal__details">
-      <div id="qvColors"></div>
-      <div id="qvSizes"></div>
+      <div id="qvColor"></div>
+      <div id="qvSize"></div>
 
       <input type="hidden" id="variantId">
-      <button class="add-to-cart" id="addToCart">ADD TO CART →</button>
+
+      <button class="quick-view-modal__add-to-cart" id="qvAddToCart">
+        ADD TO CART →
+      </button>
     </div>
   </div>
 </div>
 
 <script>
-(() => {
-  const modal = document.getElementById('quickView');
+(function(){
+  const modal = document.getElementById('quickViewModal');
   const closeBtn = modal.querySelector('.quick-view-modal__close');
 
-  let currentProduct, selected = {}, bundleVariantId = null;
+  let currentProduct = null;
+  let selectedOptions = {};
+  let bundleVariantId = null;
 
   const products = {
     {% for block in section.blocks %}
@@ -253,85 +282,84 @@ select {
     {% endfor %}
   };
 
-  document.querySelectorAll('[data-open]').forEach(btn => {
-    btn.onclick = () => openModal(btn.dataset.open);
+  document.querySelectorAll('[data-product-id]').forEach(btn => {
+    btn.onclick = () => openModal(btn.dataset.productId);
   });
 
   closeBtn.onclick = () => modal.classList.remove('active');
 
-  function openModal(id) {
+  function openModal(id){
     currentProduct = products[id];
-    selected = {};
+    selectedOptions = {};
 
-    document.getElementById('qvImage').src = currentProduct.featured_image;
-    document.getElementById('qvTitle').textContent = currentProduct.title;
-    document.getElementById('qvPrice').textContent = Shopify.formatMoney(currentProduct.price);
-    document.getElementById('qvDesc').textContent = currentProduct.description.replace(/<[^>]+>/g,'');
+    qvImage.src = currentProduct.featured_image;
+    qvTitle.textContent = currentProduct.title;
+    qvPrice.textContent = Shopify.formatMoney(currentProduct.price);
+    qvDescription.textContent = currentProduct.description.replace(/<[^>]+>/g,'');
 
     renderOptions();
     modal.classList.add('active');
   }
 
-  function renderOptions() {
-    const colors = document.getElementById('qvColors');
-    const sizes = document.getElementById('qvSizes');
-    colors.innerHTML = sizes.innerHTML = '';
+  function renderOptions(){
+    qvColor.innerHTML = '';
+    qvSize.innerHTML = '';
 
-    currentProduct.options.forEach((opt, i) => {
-      if (opt.name.toLowerCase() === 'color') {
-        colors.innerHTML = `<p class="option-label">Color</p><div class="color-grid"></div>`;
+    currentProduct.options.forEach((opt, idx) => {
+      if(opt.name.toLowerCase() === 'color'){
+        qvColor.innerHTML = '<p class="quick-view-modal__option-label">Color</p><div class="quick-view-modal__color-grid"></div>';
         opt.values.forEach(v => {
           const b = document.createElement('button');
+          b.className = 'quick-view-modal__color-option';
           b.textContent = v;
-          b.className = 'color-btn';
           b.onclick = () => {
-            document.querySelectorAll('.color-btn').forEach(x => x.classList.remove('active'));
-            b.classList.add('active');
-            selected['option'+(i+1)] = v;
+            document.querySelectorAll('.quick-view-modal__color-option').forEach(x=>x.classList.remove('selected'));
+            b.classList.add('selected');
+            selectedOptions['option'+(idx+1)] = v;
             updateVariant();
           };
-          colors.querySelector('.color-grid').appendChild(b);
+          qvColor.querySelector('.quick-view-modal__color-grid').appendChild(b);
         });
       }
 
-      if (opt.name.toLowerCase() === 'size') {
-        sizes.innerHTML = `<p class="option-label">Size</p><select></select>`;
-        const s = sizes.querySelector('select');
-        s.innerHTML = `<option value="">Choose your size</option>` +
-          opt.values.map(v => `<option>${v}</option>`).join('');
+      if(opt.name.toLowerCase() === 'size'){
+        qvSize.innerHTML = '<p class="quick-view-modal__option-label">Size</p><select class="quick-view-modal__size-select"><option value="">Choose size</option></select>';
+        const s = qvSize.querySelector('select');
+        opt.values.forEach(v => {
+          s.innerHTML += `<option>${v}</option>`;
+        });
         s.onchange = e => {
-          selected['option'+(i+1)] = e.target.value;
+          selectedOptions['option'+(idx+1)] = e.target.value;
           updateVariant();
         };
       }
     });
   }
 
-  function updateVariant() {
+  function updateVariant(){
     const v = currentProduct.variants.find(v =>
-      Object.keys(selected).every(k => v[k] === selected[k])
+      Object.keys(selectedOptions).every(k => v[k] === selectedOptions[k])
     );
-    if (v) document.getElementById('variantId').value = v.id;
+    if(v) variantId.value = v.id;
   }
 
-  document.getElementById('addToCart').onclick = async () => {
-    const id = document.getElementById('variantId').value;
-    if (!id) return alert('Select options');
+  qvAddToCart.onclick = async () => {
+    if(!variantId.value) return alert('Select options');
 
-    await fetch('/cart/add.js', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({id, quantity:1})
+    await fetch('/cart/add.js',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({id:variantId.value,quantity:1})
     });
 
-    if (Object.values(selected).map(v=>v.toLowerCase()).includes('black') &&
-        Object.values(selected).map(v=>v.toLowerCase()).includes('medium')) {
-      if (!bundleVariantId) {
+    const values = Object.values(selectedOptions).map(v=>v.toLowerCase());
+    if(values.includes('black') && values.includes('medium')){
+      if(!bundleVariantId){
         const r = await fetch('/products/soft-winter-jacket.js');
         const d = await r.json();
         bundleVariantId = d.variants[0].id;
       }
-      await fetch('/cart/add.js', {
+      await fetch('/cart/add.js',{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({id:bundleVariantId,quantity:1})
@@ -341,6 +369,7 @@ select {
     const cart = await fetch('/cart.js').then(r=>r.json());
     document.documentElement.dispatchEvent(new CustomEvent('cart:updated',{detail:cart}));
     document.querySelector('cart-drawer')?.open();
+
     modal.classList.remove('active');
   };
 })();
