@@ -561,50 +561,79 @@ h2.product-grid__heading {
 (function() {
   const sectionId = '{{ section.id }}';
   const modal = document.getElementById(`quick-view-modal-${sectionId}`);
+  const modalContent = modal.querySelector('.quick-view-modal__content');
   const closeBtn = modal.querySelector('.quick-view-modal__close');
   const form = document.getElementById(`quick-view-form-${sectionId}`);
-
+  let cachedBundleVariantId = null;
+  
+  // Color mapping for variant display
   const colorMap = {
-    black:'#000', white:'#fff', grey:'#808080', gray:'#808080',
-    red:'#f00', blue:'#00f', green:'#080', yellow:'#ff0',
-    orange:'#fa0', purple:'#800080', pink:'#ffc0cb',
-    brown:'#a52a2a', beige:'#f5f5dc', navy:'#000080',
-    maroon:'#800000', olive:'#808000', teal:'#008080',
-    silver:'#c0c0c0', gold:'#ffd700', cream:'#fffdd0'
+    'black': '#000000',
+    'white': '#FFFFFF',
+    'grey': '#808080',
+    'gray': '#808080',
+    'red': '#FF0000',
+    'blue': '#0000FF',
+    'green': '#008000',
+    'yellow': '#FFFF00',
+    'orange': '#FFA500',
+    'purple': '#800080',
+    'pink': '#FFC0CB',
+    'brown': '#A52A2A',
+    'beige': '#F5F5DC',
+    'navy': '#000080',
+    'maroon': '#800000',
+    'olive': '#808000',
+    'teal': '#008080',
+    'silver': '#C0C0C0',
+    'gold': '#FFD700',
+    'cream': '#FFFDD0'
   };
-
-  const getColorHex = c => colorMap[c.toLowerCase()] || '#e0e0e0';
-
+  
+  function getColorHex(colorName) {
+    const normalized = colorName.toLowerCase().trim();
+    return colorMap[normalized] || '#e0e0e0';
+  }
+  
+  // Product data storage
   const products = {
     {%- for block in section.blocks -%}
-      {%- if block.type == 'product' and block.settings.product != blank -%}
-      '{{ block.settings.product.id }}': {
-        id: {{ block.settings.product.id }},
-        title: {{ block.settings.product.title | json }},
-        priceFormatted: {{ block.settings.product.price | money | json }},
-        description: {{ block.settings.product.description | strip_html | truncate: 150 | json }},
-        image: {{ block.settings.product.featured_image | image_url: width: 800 | json }},
-        variants: [
-          {%- for v in block.settings.product.variants -%}
-          {
-            id: {{ v.id }},
-            option1: {{ v.option1 | json }},
-            option2: {{ v.option2 | json }},
-            option3: {{ v.option3 | json }},
-            available: {{ v.available | json }}
-          }{% unless forloop.last %},{% endunless %}
-          {%- endfor -%}
-        ],
-        options: [
-          {%- for o in block.settings.product.options_with_values -%}
-          {
-            name: {{ o.name | json }},
-            position: {{ o.position }},
-            values: {{ o.values | json }}
-          }{% unless forloop.last %},{% endunless %}
-          {%- endfor -%}
-        ]
-      }{% unless forloop.last %},{% endunless %}
+      {%- if block.type == 'product' -%}
+        {%- assign product = block.settings.product -%}
+        {%- if product != blank -%}
+          '{{ product.id }}': {
+            id: {{ product.id }},
+            title: {{ product.title | json }},
+            price: {{ product.price | json }},
+            priceFormatted: {{ product.price | money | json }},
+            description: {{ product.description | strip_html | truncate: 150 | json }},
+            image: {{ product.featured_image | image_url: width: 800 | json }},
+            variants: [
+              {%- for variant in product.variants -%}
+                {
+                  id: {{ variant.id }},
+                  title: {{ variant.title | json }},
+                  price: {{ variant.price | json }},
+                  available: {{ variant.available | json }},
+                  option1: {{ variant.option1 | json }},
+                  option2: {{ variant.option2 | json }},
+                  option3: {{ variant.option3 | json }}
+                }{%- unless forloop.last -%},{%- endunless -%}
+              {%- endfor -%}
+            ],
+            options: [
+              {%- for option in product.options_with_values -%}
+                {
+                  name: {{ option.name | json }},
+                  position: {{ option.position }},
+                  values: {{ option.values | json }}
+                }{%- unless forloop.last -%},{%- endunless -%}
+              {%- endfor -%}
+            ],
+            bundleVariantCheck: {{ block.settings.bundle_variant_check | json }},
+            bundleProductHandle: {{ block.settings.bundle_product_handle | json }}
+          }{%- unless forloop.last -%},{%- endunless -%}
+        {%- endif -%}
       {%- endif -%}
     {%- endfor -%}
   };
@@ -612,32 +641,49 @@ h2.product-grid__heading {
   let currentProduct = null;
   let selectedOptions = {};
 
-  /* OPEN QUICK VIEW — FIXED */
+  // Open modal
   document.querySelectorAll('[data-quick-view-trigger]').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
       const productId = btn.getAttribute('data-quick-view-trigger');
       openQuickView(productId);
     });
+  });
+
+  // Close modal
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  // Close on escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      closeModal();
+    }
   });
 
   function openQuickView(productId) {
     currentProduct = products[productId];
     if (!currentProduct) return;
 
-    selectedOptions = {};
-
+    // Set product details
     document.getElementById(`modal-title-${sectionId}`).textContent = currentProduct.title;
     document.getElementById(`modal-price-${sectionId}`).textContent = currentProduct.priceFormatted;
     document.getElementById(`modal-description-${sectionId}`).textContent = currentProduct.description;
     document.getElementById(`modal-image-${sectionId}`).src = currentProduct.image;
+    document.getElementById(`modal-image-${sectionId}`).alt = currentProduct.title;
 
+    // Reset selected options
+    selectedOptions = {};
+
+    // Render options
     renderOptions();
+
+    // Show modal
     modal.classList.add('active');
     document.body.classList.add('modal-open');
   }
-
-  closeBtn.onclick = closeModal;
-  modal.onclick = e => e.target === modal && closeModal();
 
   function closeModal() {
     modal.classList.remove('active');
@@ -647,91 +693,208 @@ h2.product-grid__heading {
   }
 
   function renderOptions() {
-    const colorWrap = document.getElementById(`color-option-${sectionId}`);
-    const sizeWrap = document.getElementById(`size-option-${sectionId}`);
-    colorWrap.innerHTML = '';
-    sizeWrap.innerHTML = '';
+    const colorContainer = document.getElementById(`color-option-${sectionId}`);
+    const sizeContainer = document.getElementById(`size-option-${sectionId}`);
 
-    currentProduct.options.forEach(option => {
-      const name = option.name.toLowerCase();
+    colorContainer.innerHTML = '';
+    sizeContainer.innerHTML = '';
 
-      if (name === 'color' || name === 'colour') {
-        colorWrap.innerHTML = `
+    currentProduct.options.forEach((option, index) => {
+      const optionName = option.name.toLowerCase();
+      
+      if (optionName === 'color' || optionName === 'colour') {
+        // Render color swatches
+        colorContainer.innerHTML = `
           <label class="quick-view-modal__option-label">Color</label>
-          <div class="quick-view-modal__color-grid"></div>
+          <div class="quick-view-modal__color-grid" id="color-grid-${sectionId}"></div>
         `;
-        const grid = colorWrap.querySelector('.quick-view-modal__color-grid');
 
+        const colorGrid = document.getElementById(`color-grid-${sectionId}`);
         option.values.forEach(value => {
           const btn = document.createElement('button');
           btn.type = 'button';
           btn.className = 'quick-view-modal__color-option';
           btn.textContent = value;
-          btn.style.setProperty('--color-value', getColorHex(value));
+          btn.dataset.optionValue = value;
+          btn.dataset.optionPosition = option.position;
+          
+          // Set CSS custom property for color line
+          const colorHex = getColorHex(value);
+          btn.style.setProperty('--color-value', colorHex);
 
-          btn.onclick = () => {
-            grid.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.quick-view-modal__color-option').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
             selectedOptions[`option${option.position}`] = value;
             updateVariant();
-          };
-          grid.appendChild(btn);
-        });
-      }
+          });
 
-      if (name === 'size') {
-        sizeWrap.innerHTML = `
+          colorGrid.appendChild(btn);
+        });
+
+  
+
+      } else if (optionName === 'size') {
+        // Render size dropdown
+        sizeContainer.innerHTML = `
           <label class="quick-view-modal__option-label">Size</label>
-          <select class="quick-view-modal__size-select">
+          <select class="quick-view-modal__size-select" id="size-select-${sectionId}" required>
             <option value="">Choose your size</option>
-            ${option.values.map(v => `<option value="${v}">${v}</option>`).join('')}
+            ${option.values.map(value => `<option value="${value}">${value}</option>`).join('')}
           </select>
         `;
-        sizeWrap.querySelector('select').onchange = e => {
+
+        const sizeSelect = document.getElementById(`size-select-${sectionId}`);
+        sizeSelect.addEventListener('change', (e) => {
           selectedOptions[`option${option.position}`] = e.target.value;
           updateVariant();
-        };
+        });
       }
     });
 
     updateVariant();
   }
+  
 
-  function updateVariant() {
-    const btn = document.getElementById(`add-to-cart-btn-${sectionId}`);
-    const variant = currentProduct.variants.find(v =>
+function updateVariant() {
+  const addToCartBtn = document.getElementById(`add-to-cart-btn-${sectionId}`);
+
+  const variant = currentProduct.variants.find(v => {
+    return (
       (!selectedOptions.option1 || v.option1 === selectedOptions.option1) &&
       (!selectedOptions.option2 || v.option2 === selectedOptions.option2) &&
       (!selectedOptions.option3 || v.option3 === selectedOptions.option3)
     );
-
-    if (variant && Object.keys(selectedOptions).length === currentProduct.options.length) {
-      document.getElementById(`variant-id-${sectionId}`).value = variant.id;
-      btn.disabled = !variant.available;
-    } else {
-      document.getElementById(`variant-id-${sectionId}`).value = '';
-      btn.disabled = true;
-    }
-  }
-
-  form.addEventListener('submit', async e => {
-    e.preventDefault();
-    const id = document.getElementById(`variant-id-${sectionId}`).value;
-    if (!id) return alert('Please select all options');
-
-    await fetch('/cart/add.js', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ id, quantity:1 })
-    });
-
-    closeModal();
   });
 
+  if (variant && Object.keys(selectedOptions).length === currentProduct.options.length) {
+    document.getElementById(`variant-id-${sectionId}`).value = variant.id;
+    document.getElementById(`modal-price-${sectionId}`).textContent = formatMoney(variant.price);
+
+    addToCartBtn.disabled = !variant.available;
+    addToCartBtn.querySelector('span').textContent = variant.available
+      ? 'Add to Cart'
+      : 'Sold Out';
+  } else {
+    // ❗ No full selection yet
+    document.getElementById(`variant-id-${sectionId}`).value = '';
+    addToCartBtn.disabled = true;
+    addToCartBtn.querySelector('span').textContent = 'Add to Cart';
+  }
+}
+
+
+  // Form submission
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const variantId = document.getElementById(`variant-id-${sectionId}`).value;
+    if (!variantId) {
+      alert('Please select all options');
+      return;
+    }
+
+    const addToCartBtn = document.getElementById(`add-to-cart-btn-${sectionId}`);
+    addToCartBtn.classList.add('loading');
+    addToCartBtn.disabled = true;
+
+    try {
+      // Add main product to cart
+      await addToCart(variantId, 1);
+
+      // Check for bundle
+      if (shouldAddBundle()) {
+        await addBundleProduct();
+      }
+
+      // Success feedback
+      addToCartBtn.classList.remove('loading');
+      addToCartBtn.querySelector('span').textContent = 'Added!';
+      
+      setTimeout(() => {
+        closeModal();
+        addToCartBtn.querySelector('span').textContent = 'Add to Cart';
+        addToCartBtn.disabled = false;
+      }, 1000);
+
+    
+      
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Error adding to cart. Please try again.');
+      addToCartBtn.classList.remove('loading');
+      addToCartBtn.disabled = false;
+    }
+  });
+
+function shouldAddBundle() {
+  if (!currentProduct.bundleVariantCheck || !currentProduct.bundleProductHandle) {
+    return false;
+  }
+
+  const required = currentProduct.bundleVariantCheck
+    .split(',')
+    .map(v => v.trim().toLowerCase());
+
+  const selected = Object.values(selectedOptions)
+    .filter(Boolean)
+    .map(v => v.trim().toLowerCase());
+
+  return required.every(req => selected.includes(req));
+}
+
+
+async function addBundleProduct() {
+  // Fetch cart first
+  const cart = await fetch('/cart.js').then(r => r.json());
+
+  // If jacket already exists → stop
+  if (cart.items.some(item => item.handle === 'dark-winter-jacket')) {
+    return;
+  }
+
+  // Fetch bundle product
+  if (!cachedBundleVariantId) {
+    const res = await fetch('/products/dark-winter-jacket.js');
+    if (!res.ok) return;
+
+    const data = await res.json();
+    cachedBundleVariantId = data.variants.find(v => v.available)?.id;
+  }
+
+  if (!cachedBundleVariantId) return;
+
+  return addToCart(cachedBundleVariantId, 1);
+}
+
+
+
+  async function addToCart(variantId, quantity) {
+    const response = await fetch('/cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: variantId,
+        quantity: quantity
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to add to cart');
+    }
+
+    return response.json();
+  }
+  
+  
+
+  function formatMoney(cents) {
+    return '{{ shop.money_format }}'.replace('{{amount}}', (cents / 100).toFixed(2));
+  }
 })();
 </script>
-
-
 
 {% schema %}
 {
