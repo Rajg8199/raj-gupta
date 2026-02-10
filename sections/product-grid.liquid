@@ -803,14 +803,19 @@ h2.product-grid__heading {
       }
 
       // Success feedback
-      addToCartBtn.classList.remove('loading');
-      addToCartBtn.querySelector('span').textContent = 'Added!';
-      
-      setTimeout(() => {
-        closeModal();
-        addToCartBtn.querySelector('span').textContent = 'Add to Cart';
-        addToCartBtn.disabled = false;
-      }, 1000);
+// Success feedback
+addToCartBtn.classList.remove('loading');
+addToCartBtn.querySelector('span').textContent = 'Added!';
+
+// OPEN CART DRAWER (Horizon)
+await openHorizonCartDrawer();
+
+setTimeout(() => {
+  closeModal();
+  addToCartBtn.querySelector('span').textContent = 'Add to Cart';
+  addToCartBtn.disabled = false;
+}, 600);
+
 
       // Trigger cart refresh (if using theme cart)
       document.documentElement.dispatchEvent(new CustomEvent('cart:refresh'));
