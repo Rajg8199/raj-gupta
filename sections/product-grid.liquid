@@ -733,10 +733,10 @@ h2.product-grid__heading {
         });
 
         // Auto-select first color
-        if (option.values.length > 0) {
+        {% comment %} if (option.values.length > 0) {
           selectedOptions[`option${option.position}`] = option.values[0];
           colorGrid.querySelector('.quick-view-modal__color-option').classList.add('selected');
-        }
+        } {% endcomment %}
 
       } else if (optionName === 'size') {
         // Render size dropdown
