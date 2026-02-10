@@ -816,8 +816,11 @@ async function addBundleProduct() {
   }
 
   function formatMoney(cents) {
-    return '{{ shop.money_format }}'.replace('{{amount}}', (cents / 100).toFixed(2));
-  }
+  const amount = (cents / 100).toFixed(2);
+  return '{{ shop.money_format }}'
+    .replace('{{amount}}', amount)
+    .replace('{{amount_no_decimals}}', Math.floor(cents / 100));
+}
 })();
 </script>
 
