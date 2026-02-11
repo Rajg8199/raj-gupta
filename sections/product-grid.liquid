@@ -576,83 +576,53 @@
   }
 
   form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const variantId = document.getElementById(`variant-id-${sectionId}`).value;
-    if (!variantId) return alert('Please select all options');
+  e.preventDefault();
 
-    const btn = document.getElementById(`add-to-cart-btn-${sectionId}`);
-    btn.classList.add('loading');
-    btn.disabled = true;
+  const variantId = document.getElementById(`variant-id-${sectionId}`).value;
+  if (!variantId) return alert('Please select all options');
 
-    try {
-      // Add main product
-      await fetch('/cart/add.js', { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ id: variantId, quantity: 1 }) 
-      });
-      
-      // Add bundle if needed
-      if (shouldBundle()) await addBundle();
+  const btn = document.getElementById(`add-to-cart-btn-${sectionId}`);
+  btn.classList.add('loading');
+  btn.disabled = true;
 
-      btn.classList.remove('loading');
-      btn.querySelector('span').textContent = 'Added!';
-      
-      // THE WORKING FIX: Completely replace the cart-drawer element
-      setTimeout(async () => {
-        const response = await fetch(`${window.location.pathname}?sections=cart-drawer,cart-icon-bubble`);
-        const sections = await response.json();
-        
-        // CRITICAL: Replace the ENTIRE cart-drawer element, not just innerHTML
-        if (sections['cart-drawer']) {
-          const oldDrawer = document.querySelector('cart-drawer');
-          if (oldDrawer) {
-            const temp = document.createElement('div');
-            temp.innerHTML = sections['cart-drawer'];
-            const newDrawer = temp.querySelector('cart-drawer');
-            
-            if (newDrawer) {
-              // Replace the entire element in the DOM
-              oldDrawer.parentNode.replaceChild(newDrawer, oldDrawer);
-              
-              // Now open the newly inserted drawer
-              setTimeout(() => {
-                const drawer = document.querySelector('cart-drawer');
-                if (drawer && typeof drawer.open === 'function') {
-                  drawer.open();
-                }
-              }, 50);
-            }
-          }
-        }
-        
-        // Update cart count
-        if (sections['cart-icon-bubble']) {
-          const icon = document.querySelector('cart-icon');
-          if (icon) {
-            const temp = document.createElement('div');
-            temp.innerHTML = sections['cart-icon-bubble'];
-            const newIcon = temp.querySelector('cart-icon');
-            if (newIcon) icon.innerHTML = newIcon.innerHTML;
-          }
-        }
-        
-        // Close modal
-        setTimeout(() => {
-          closeModal();
-          btn.querySelector('span').textContent = 'Add to Cart';
-          btn.disabled = false;
-        }, 400);
-        
-      }, 100);
+  try {
+    // 1️⃣ Add product
+    await fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: variantId, quantity: 1 })
+    });
 
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Error adding to cart');
-      btn.classList.remove('loading');
+    // 2️⃣ Add bundle if needed
+    if (shouldBundle()) await addBundle();
+
+    // 3️⃣ Fetch updated cart
+    const cart = await fetch('/cart.js').then(r => r.json());
+
+    // 4️⃣ Tell Horizon cart changed
+    document.dispatchEvent(
+      new CustomEvent('cart:update', { detail: { data: cart } })
+    );
+
+    // 5️⃣ Open cart drawer (native)
+    document.querySelector('cart-drawer-component')?.open();
+
+    btn.classList.remove('loading');
+    btn.querySelector('span').textContent = 'Added!';
+
+    setTimeout(() => {
+      closeModal();
+      btn.querySelector('span').textContent = 'Add to Cart';
       btn.disabled = false;
-    }
-  });
+    }, 400);
+
+  } catch (err) {
+    console.error(err);
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+});
+
 
   function normalize(v) {
     if (!v) return '';
