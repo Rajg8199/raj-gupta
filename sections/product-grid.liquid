@@ -598,21 +598,30 @@
       btn.classList.remove('loading');
       btn.querySelector('span').textContent = 'Added!';
       
-      // CRITICAL FIX: Refresh cart and open drawer
+      // THE WORKING FIX: Completely replace the cart-drawer element
       setTimeout(async () => {
-        // Fetch sections
         const response = await fetch(`${window.location.pathname}?sections=cart-drawer,cart-icon-bubble`);
         const sections = await response.json();
         
-        // Update cart drawer HTML
+        // CRITICAL: Replace the ENTIRE cart-drawer element, not just innerHTML
         if (sections['cart-drawer']) {
-          const drawer = document.querySelector('cart-drawer');
-          if (drawer) {
+          const oldDrawer = document.querySelector('cart-drawer');
+          if (oldDrawer) {
             const temp = document.createElement('div');
             temp.innerHTML = sections['cart-drawer'];
             const newDrawer = temp.querySelector('cart-drawer');
+            
             if (newDrawer) {
-              drawer.innerHTML = newDrawer.innerHTML;
+              // Replace the entire element in the DOM
+              oldDrawer.parentNode.replaceChild(newDrawer, oldDrawer);
+              
+              // Now open the newly inserted drawer
+              setTimeout(() => {
+                const drawer = document.querySelector('cart-drawer');
+                if (drawer && typeof drawer.open === 'function') {
+                  drawer.open();
+                }
+              }, 50);
             }
           }
         }
@@ -628,31 +637,14 @@
           }
         }
         
-        // CRITICAL: Open the cart drawer
-        setTimeout(() => {
-          const drawer = document.querySelector('cart-drawer');
-          if (drawer) {
-            // Try calling the open method
-            if (typeof drawer.open === 'function') {
-              drawer.open();
-            } 
-            // Or manually open it
-            else {
-              drawer.setAttribute('open', '');
-              drawer.classList.add('active');
-              document.body.classList.add('overflow-hidden');
-            }
-          }
-        }, 100);
-        
-        // Close our modal
+        // Close modal
         setTimeout(() => {
           closeModal();
           btn.querySelector('span').textContent = 'Add to Cart';
           btn.disabled = false;
-        }, 500);
+        }, 400);
         
-      }, 200);
+      }, 100);
 
     } catch (error) {
       console.error('Error:', error);
