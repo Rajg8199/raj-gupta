@@ -575,7 +575,7 @@
     }
   }
 
-form.addEventListener('submit', async (e) => {
+  form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const variantId = document.getElementById(`variant-id-${sectionId}`).value;
@@ -585,28 +585,27 @@ form.addEventListener('submit', async (e) => {
   btn.classList.add('loading');
   btn.disabled = true;
 
-  // 🚀 OPEN DRAWER IMMEDIATELY
-  document.querySelector('cart-drawer-component')?.open();
-
   try {
-    // 1️⃣ Add main product
+    // 1️⃣ Add product
     await fetch('/cart/add.js', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: variantId, quantity: 1 })
     });
 
-    // 2️⃣ Add bundle (if required)
-    if (shouldBundle()) {
-      await addBundle();
-    }
+    // 2️⃣ Add bundle if needed
+    if (shouldBundle()) await addBundle();
 
-    // 3️⃣ Sync cart in background
+    // 3️⃣ Fetch updated cart
     const cart = await fetch('/cart.js').then(r => r.json());
 
+    // 4️⃣ Tell Horizon cart changed
     document.dispatchEvent(
       new CustomEvent('cart:update', { detail: { data: cart } })
     );
+
+    // 5️⃣ Open cart drawer (native)
+    document.querySelector('cart-drawer-component')?.open();
 
     btn.classList.remove('loading');
     btn.querySelector('span').textContent = 'Added!';
@@ -623,7 +622,6 @@ form.addEventListener('submit', async (e) => {
     btn.disabled = false;
   }
 });
-
 
 
   function normalize(v) {
