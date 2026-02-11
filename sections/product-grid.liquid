@@ -1,4 +1,3 @@
-
 <style>
   .product-grid-section {
     position: relative;
@@ -584,25 +583,92 @@
     btn.disabled = true;
 
     try {
-      await fetch('/cart/add.js', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: variantId, quantity: 1 }) });
-      if (shouldBundle()) await addBundle();
+      // Add main product
+      await fetch('/cart/add.js', { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify({ id: variantId, quantity: 1 }) 
+      });
+      
+      // Add bundle if needed
+      if (shouldBundle()) {
+        await addBundle();
+      }
 
       btn.classList.remove('loading');
       btn.querySelector('span').textContent = 'Added!';
       
-      // CRITICAL FIX: Refresh cart using PubSub
-      const cart = await fetch('/cart.js').then(r => r.json());
-      if (window.PubSub) {
-        window.PubSub.publish('cart-updated', cart);
-      }
+      // HORIZON THEME SPECIFIC: Update cart and open drawer
+      setTimeout(async () => {
+        try {
+          // Step 1: Fetch updated sections FIRST
+          console.log('🔄 Fetching cart sections...');
+          const sectionsToRender = ['cart-drawer', 'cart-icon-bubble'];
+          const response = await fetch(`${window.location.pathname}?sections=${sectionsToRender.join(',')}`);
+          const sections = await response.json();
+          
+          // Step 2: Update cart drawer HTML
+          if (sections['cart-drawer']) {
+            const drawer = document.querySelector('cart-drawer');
+            if (drawer) {
+              console.log('📦 Updating cart drawer content...');
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(sections['cart-drawer'], 'text/html');
+              const newDrawerContent = doc.querySelector('cart-drawer');
+              
+              if (newDrawerContent) {
+                // Replace entire cart-drawer element to get fresh Alpine.js bindings
+                const parent = drawer.parentElement;
+                parent.replaceChild(newDrawerContent, drawer);
+                
+                // Reinitialize Alpine.js on the new element if Alpine is available
+                if (window.Alpine) {
+                  window.Alpine.initTree(newDrawerContent);
+                }
+                
+                console.log('✅ Cart drawer content updated');
+              }
+            }
+          }
+          
+          // Step 3: Update cart bubble/count
+          const cart = await fetch('/cart.js').then(r => r.json());
+          const bubble = document.querySelector('.cart-bubble__text-count, [data-testid="cart-bubble"]');
+          if (bubble) {
+            bubble.textContent = cart.item_count;
+            if (cart.item_count > 0) {
+              bubble.classList.remove('hidden');
+            }
+            
+            // Update screen reader text
+            const hiddenText = document.querySelector('#cart-bubble-text .visually-hidden');
+            if (hiddenText) {
+              hiddenText.textContent = `Total items in cart: ${cart.item_count}`;
+            }
+            console.log('✅ Cart count updated:', cart.item_count);
+          }
+          
+          // Step 4: Open the cart drawer (after content is updated)
+          setTimeout(() => {
+            const cartButton = document.querySelector('[data-testid="cart-drawer-trigger"], button[on\\:click*="/open"]');
+            if (cartButton) {
+              console.log('🚪 Opening cart drawer...');
+              cartButton.click();
+            }
+          }, 100);
+          
+        } catch (err) {
+          console.error('❌ Cart update failed:', err);
+        }
 
-      setTimeout(() => {
+        // Close quick view modal
         closeModal();
         btn.querySelector('span').textContent = 'Add to Cart';
         btn.disabled = false;
-      }, 1000);
+      }, 400);
 
     } catch (error) {
+      console.error('Add to cart error:', error);
       alert('Error adding to cart');
       btn.classList.remove('loading');
       btn.disabled = false;
@@ -611,7 +677,13 @@
 
   function normalize(v) {
     if (!v) return '';
-    const map = { 'small': 's', 's': 's', 'medium': 'm', 'm': 'm', 'large': 'l', 'l': 'l', 'extra large': 'xl', 'x-large': 'xl', 'xl': 'xl', 'extra small': 'xs', 'x-small': 'xs', 'xs': 'xs' };
+    const map = { 
+      'small': 's', 's': 's', 
+      'medium': 'm', 'm': 'm', 
+      'large': 'l', 'l': 'l', 
+      'extra large': 'xl', 'x-large': 'xl', 'xl': 'xl',
+      'extra small': 'xs', 'x-small': 'xs', 'xs': 'xs' 
+    };
     return map[v.toString().trim().toLowerCase()] || v.toString().trim().toLowerCase();
   }
 
@@ -619,23 +691,40 @@
     if (!current.bundleCheck || !current.bundleHandle) return false;
     const req = current.bundleCheck.split(',').map(v => normalize(v));
     const sel = Object.values(selected).filter(Boolean).map(v => normalize(v));
+    console.log('Bundle check:', { required: req, selected: sel, match: req.every(r => sel.includes(r)) });
     return req.every(r => sel.includes(r));
   }
 
   async function addBundle() {
     const cart = await fetch('/cart.js').then(r => r.json());
-    if (cart.items.some(i => i.handle === current.bundleHandle)) return;
+    if (cart.items.some(i => i.handle === current.bundleHandle)) {
+      console.log('Bundle already in cart');
+      return;
+    }
 
     if (!cache[current.bundleHandle]) {
       const res = await fetch(`/products/${current.bundleHandle}.js`);
-      if (!res.ok) return;
+      if (!res.ok) {
+        console.error('Failed to fetch bundle product');
+        return;
+      }
       const data = await res.json();
       const variant = data.variants.find(v => v.available);
-      if (!variant) return;
+      if (!variant) {
+        console.error('No available variant for bundle');
+        return;
+      }
       cache[current.bundleHandle] = variant.id;
+      console.log('Bundle variant cached:', variant.id);
     }
 
-    await fetch('/cart/add.js', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: cache[current.bundleHandle], quantity: 1 }) });
+    console.log('Adding bundle product:', current.bundleHandle);
+    await fetch('/cart/add.js', { 
+      method: 'POST', 
+      headers: { 'Content-Type': 'application/json' }, 
+      body: JSON.stringify({ id: cache[current.bundleHandle], quantity: 1 }) 
+    });
+    console.log('Bundle added successfully');
   }
 })();
 </script>
