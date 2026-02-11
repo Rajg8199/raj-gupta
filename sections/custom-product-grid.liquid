@@ -119,14 +119,15 @@
 ================================ */
 .modal-card {
   position: absolute;
-  top: 80px;
+  top: 96px;               /* below header */
   right: 40px;
   width: 420px;
-  max-height: calc(100vh - 120px);
-  background: var(--color-background, #fff);
+  height: calc(100vh - 140px); /* 👈 THIS IS THE KEY */
+  background: #fff;
   display: flex;
   flex-direction: column;
 }
+
 
 /* Close button */
 .modal-close {
