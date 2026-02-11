@@ -452,63 +452,83 @@
 </div>
 
 <script>
-(function() {
+(function () {
   const sectionId = '{{ section.id }}';
   const modal = document.getElementById(`quick-view-modal-${sectionId}`);
   const closeBtn = modal.querySelector('.quick-view-modal__close');
   const form = document.getElementById(`quick-view-form-${sectionId}`);
   const cache = {};
-  
+
   const colorMap = {
-    'black': '#000000', 'white': '#FFFFFF', 'grey': '#808080', 'gray': '#808080',
-    'red': '#FF0000', 'blue': '#0000FF', 'green': '#008000', 'yellow': '#FFFF00',
-    'orange': '#FFA500', 'purple': '#800080', 'pink': '#FFC0CB', 'brown': '#A52A2A',
-    'beige': '#F5F5DC', 'navy': '#000080', 'maroon': '#800000', 'olive': '#808000',
-    'teal': '#008080', 'silver': '#C0C0C0', 'gold': '#FFD700', 'cream': '#FFFDD0'
+    black:'#000', white:'#fff', grey:'#808080', gray:'#808080',
+    red:'#f00', blue:'#00f', green:'#008000', yellow:'#ff0',
+    orange:'#ffa500', purple:'#800080', pink:'#ffc0cb',
+    brown:'#a52a2a', beige:'#f5f5dc', navy:'#000080',
+    maroon:'#800000', olive:'#808000', teal:'#008080',
+    silver:'#c0c0c0', gold:'#ffd700', cream:'#fffdd0'
   };
-  
+
   const products = {
     {%- for block in section.blocks -%}
-      {%- if block.type == 'product' and block.settings.product != blank -%}
-        {%- assign product = block.settings.product -%}
-        '{{ product.id }}': {
-          id: {{ product.id }},
-          title: {{ product.title | json }},
-          priceFormatted: {{ product.price | money | json }},
-          description: {{ product.description | strip_html | truncate: 150 | json }},
-          image: {{ product.featured_image | image_url: width: 800 | json }},
-          variants: [{%- for variant in product.variants -%}
-            { id: {{ variant.id }}, priceFormatted: {{ variant.price | money | json }}, available: {{ variant.available | json }}, option1: {{ variant.option1 | json }}, option2: {{ variant.option2 | json }}, option3: {{ variant.option3 | json }} }{%- unless forloop.last -%},{%- endunless -%}
-          {%- endfor -%}],
-          options: [{%- for option in product.options_with_values -%}
-            { name: {{ option.name | json }}, position: {{ option.position }}, values: {{ option.values | json }} }{%- unless forloop.last -%},{%- endunless -%}
-          {%- endfor -%}],
-          bundleCheck: {{ block.settings.bundle_variant_check | json }},
-          bundleHandle: {{ block.settings.bundle_product_handle | json }}
+    {%- if block.type == 'product' and block.settings.product != blank -%}
+    {%- assign product = block.settings.product -%}
+    '{{ product.id }}': {
+      id: {{ product.id }},
+      title: {{ product.title | json }},
+      priceFormatted: {{ product.price | money | json }},
+      description: {{ product.description | strip_html | truncate: 150 | json }},
+      image: {{ product.featured_image | image_url: width: 800 | json }},
+      variants: [
+        {%- for v in product.variants -%}
+        {
+          id: {{ v.id }},
+          available: {{ v.available | json }},
+          priceFormatted: {{ v.price | money | json }},
+          option1: {{ v.option1 | json }},
+          option2: {{ v.option2 | json }},
+          option3: {{ v.option3 | json }}
         }{%- unless forloop.last -%},{%- endunless -%}
-      {%- endif -%}
+        {%- endfor -%}
+      ],
+      options: [
+        {%- for o in product.options_with_values -%}
+        { name: {{ o.name | json }}, position: {{ o.position }}, values: {{ o.values | json }} }
+        {%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ],
+      bundleCheck: {{ block.settings.bundle_variant_check | json }},
+      bundleHandle: {{ block.settings.bundle_product_handle | json }}
+    }{%- unless forloop.last -%},{%- endunless -%}
+    {%- endif -%}
     {%- endfor -%}
   };
 
-  let current = null, selected = {};
+  let current = null;
+  let selected = {};
 
   document.querySelectorAll('[data-quick-view-trigger]').forEach(btn => {
-    btn.addEventListener('click', (e) => { e.stopPropagation(); openModal(btn.getAttribute('data-quick-view-trigger')); });
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      openModal(btn.dataset.quickViewTrigger);
+    });
   });
 
   closeBtn.addEventListener('click', closeModal);
-  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('active')) closeModal(); });
+  modal.addEventListener('click', e => e.target === modal && closeModal());
+  document.addEventListener('keydown', e => e.key === 'Escape' && closeModal());
 
   function openModal(id) {
     current = products[id];
     if (!current) return;
+
     document.getElementById(`modal-title-${sectionId}`).textContent = current.title;
     document.getElementById(`modal-price-${sectionId}`).textContent = current.priceFormatted;
     document.getElementById(`modal-description-${sectionId}`).textContent = current.description;
     document.getElementById(`modal-image-${sectionId}`).src = current.image;
+
     selected = {};
     renderOptions();
+
     modal.classList.add('active');
     document.body.classList.add('modal-open');
   }
@@ -528,37 +548,47 @@
 
     current.options.forEach(opt => {
       const name = opt.name.toLowerCase();
+
       if (name === 'color' || name === 'colour') {
-        colorEl.innerHTML = `<label class="quick-view-modal__option-label">Color</label><div class="quick-view-modal__color-grid" id="color-grid-${sectionId}"></div>`;
-        const grid = document.getElementById(`color-grid-${sectionId}`);
+        colorEl.innerHTML = `<label class="quick-view-modal__option-label">Color</label><div class="quick-view-modal__color-grid"></div>`;
+        const grid = colorEl.querySelector('.quick-view-modal__color-grid');
+
         opt.values.forEach(val => {
           const btn = document.createElement('button');
           btn.type = 'button';
           btn.className = 'quick-view-modal__color-option';
           btn.textContent = val;
-          btn.style.setProperty('--color-value', colorMap[val.toLowerCase().trim()] || '#e0e0e0');
-          btn.addEventListener('click', () => {
-            document.querySelectorAll('.quick-view-modal__color-option').forEach(b => b.classList.remove('selected'));
+          btn.style.setProperty('--color-value', colorMap[val.toLowerCase()] || '#e0e0e0');
+          btn.onclick = () => {
+            grid.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
             selected[`option${opt.position}`] = val;
             updateVariant();
-          });
+          };
           grid.appendChild(btn);
         });
-      } else if (name === 'size') {
-        sizeEl.innerHTML = `<label class="quick-view-modal__option-label">Size</label><select class="quick-view-modal__size-select" id="size-select-${sectionId}" required><option value="">Choose your size</option>${opt.values.map(v => `<option value="${v}">${v}</option>`).join('')}</select>`;
-        document.getElementById(`size-select-${sectionId}`).addEventListener('change', (e) => {
+      }
+
+      if (name === 'size') {
+        sizeEl.innerHTML = `
+          <label class="quick-view-modal__option-label">Size</label>
+          <select class="quick-view-modal__size-select">
+            <option value="">Choose size</option>
+            ${opt.values.map(v => `<option value="${v}">${v}</option>`).join('')}
+          </select>`;
+        sizeEl.querySelector('select').onchange = e => {
           selected[`option${opt.position}`] = e.target.value;
           updateVariant();
-        });
+        };
       }
     });
+
     updateVariant();
   }
 
   function updateVariant() {
     const btn = document.getElementById(`add-to-cart-btn-${sectionId}`);
-    const variant = current.variants.find(v => 
+    const variant = current.variants.find(v =>
       (!selected.option1 || v.option1 === selected.option1) &&
       (!selected.option2 || v.option2 === selected.option2) &&
       (!selected.option3 || v.option3 === selected.option3)
@@ -568,127 +598,82 @@
       document.getElementById(`variant-id-${sectionId}`).value = variant.id;
       document.getElementById(`modal-price-${sectionId}`).textContent = variant.priceFormatted;
       btn.disabled = !variant.available;
-      btn.querySelector('span').textContent = variant.available ? 'Add to Cart' : 'Sold Out';
     } else {
-      document.getElementById(`variant-id-${sectionId}`).value = '';
       btn.disabled = true;
     }
   }
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const variantId = document.getElementById(`variant-id-${sectionId}`).value;
+    if (!variantId) return;
 
-  const variantId = document.getElementById(`variant-id-${sectionId}`).value;
-  if (!variantId) return alert('Please select all options');
+    const btn = document.getElementById(`add-to-cart-btn-${sectionId}`);
+    btn.classList.add('loading');
+    btn.disabled = true;
 
-  const btn = document.getElementById(`add-to-cart-btn-${sectionId}`);
-  btn.classList.add('loading');
-  btn.disabled = true;
+    try {
+      await fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: variantId, quantity: 1 })
+      });
 
-  try {
-    await fetch('/cart/add.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: variantId, quantity: 1 })
-    });
+      if (shouldBundle()) await addBundle();
 
-    // 🔑 KEY PART — refresh cart state
-    const cart = await fetch('/cart.js').then(r => r.json());
+      const cart = await fetch('/cart.js').then(r => r.json());
 
-    // 🔑 Horizon-specific drawer open
-    const drawer = document.querySelector('cart-drawer');
-    if (drawer) {
-      drawer.cart = cart;       // update state
-      drawer.open();            // open drawer
-    }
+      const drawer = document.querySelector('cart-drawer');
+      if (drawer) {
+        drawer.cart = cart;
+        drawer.open();
+      }
 
-    // update cart icon
-    document.dispatchEvent(new CustomEvent('cart:refresh'));
+      document.dispatchEvent(new CustomEvent('cart:refresh'));
 
-    btn.classList.remove('loading');
-    btn.querySelector('span').textContent = 'Added!';
+      btn.classList.remove('loading');
+      btn.querySelector('span').textContent = 'Added!';
 
-    setTimeout(() => {
-      closeModal();
-      btn.querySelector('span').textContent = 'Add to Cart';
-      btn.disabled = false;
-    }, 400);
+      setTimeout(() => {
+        closeModal();
+        btn.querySelector('span').textContent = 'Add to Cart';
+        btn.disabled = false;
+      }, 400);
 
-  } catch (err) {
-    console.error(err);
-    alert('Failed to add product');
-    btn.classList.remove('loading');
-    btn.disabled = false;
-  }
-});
-
-        
-        // Update cart count
-        if (sections['cart-icon-bubble']) {
-          const icon = document.querySelector('cart-icon');
-          if (icon) {
-            const temp = document.createElement('div');
-            temp.innerHTML = sections['cart-icon-bubble'];
-            const newIcon = temp.querySelector('cart-icon');
-            if (newIcon) icon.innerHTML = newIcon.innerHTML;
-          }
-        }
-        
-        // Close modal
-        setTimeout(() => {
-          closeModal();
-          btn.querySelector('span').textContent = 'Add to Cart';
-          btn.disabled = false;
-        }, 400);
-        
-      }, 100);
-
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Error adding to cart');
+    } catch (err) {
+      console.error(err);
       btn.classList.remove('loading');
       btn.disabled = false;
     }
   });
 
   function normalize(v) {
-    if (!v) return '';
-    const map = { 
-      'small': 's', 's': 's', 'medium': 'm', 'm': 'm', 'large': 'l', 'l': 'l', 
-      'extra large': 'xl', 'x-large': 'xl', 'xl': 'xl',
-      'extra small': 'xs', 'x-small': 'xs', 'xs': 'xs' 
-    };
-    return map[v.toString().trim().toLowerCase()] || v.toString().trim().toLowerCase();
+    return v?.toLowerCase().trim();
   }
 
   function shouldBundle() {
     if (!current.bundleCheck || !current.bundleHandle) return false;
-    const req = current.bundleCheck.split(',').map(v => normalize(v));
-    const sel = Object.values(selected).filter(Boolean).map(v => normalize(v));
-    return req.every(r => sel.includes(r));
+    const req = current.bundleCheck.split(',').map(normalize);
+    const sel = Object.values(selected).map(normalize);
+    return req.every(v => sel.includes(v));
   }
 
   async function addBundle() {
-    const cart = await fetch('/cart.js').then(r => r.json());
-    if (cart.items.some(i => i.handle === current.bundleHandle)) return;
-
     if (!cache[current.bundleHandle]) {
-      const res = await fetch(`/products/${current.bundleHandle}.js`);
-      if (!res.ok) return;
-      const data = await res.json();
-      const variant = data.variants.find(v => v.available);
-      if (!variant) return;
-      cache[current.bundleHandle] = variant.id;
+      const p = await fetch(`/products/${current.bundleHandle}.js`).then(r => r.json());
+      cache[current.bundleHandle] = p.variants.find(v => v.available)?.id;
     }
-
-    await fetch('/cart/add.js', { 
-      method: 'POST', 
-      headers: { 'Content-Type': 'application/json' }, 
-      body: JSON.stringify({ id: cache[current.bundleHandle], quantity: 1 }) 
-    });
+    if (cache[current.bundleHandle]) {
+      await fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: cache[current.bundleHandle], quantity: 1 })
+      });
+    }
   }
 })();
 </script>
+
 
 {% schema %}
 {
