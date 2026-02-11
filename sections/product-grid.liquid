@@ -888,31 +888,55 @@ function updateVariant() {
     }
   });
 
+  function normalizeOptionValue(value) {
+  if (!value) return '';
+
+  const v = value.toString().trim().toLowerCase();
+
+  const sizeMap = {
+    'small': 's',
+    's': 's',
+    'medium': 'm',
+    'm': 'm',
+    'large': 'l',
+    'l': 'l',
+    'extra large': 'xl',
+    'x-large': 'xl',
+    'xl': 'xl',
+    'extra small': 'xs',
+    'x-small': 'xs',
+    'xs': 'xs'
+  };
+
+  return sizeMap[v] || v;
+}
+
+
 function shouldAddBundle() {
-  // If no bundle settings, return false
   if (!currentProduct.bundleVariantCheck || !currentProduct.bundleProductHandle) {
     console.log('❌ No bundle settings configured');
     return false;
   }
 
-  // Split and normalize the required variants
+  // Normalize required values (from theme settings)
   const required = currentProduct.bundleVariantCheck
     .split(',')
-    .map(v => v.trim().toLowerCase());
+    .map(v => normalizeOptionValue(v));
 
-  // Get all selected option values and normalize
+  // Normalize selected option values (from modal)
   const selected = Object.values(selectedOptions)
     .filter(Boolean)
-    .map(v => v.trim().toLowerCase());
+    .map(v => normalizeOptionValue(v));
 
-  console.log('Bundle check:', {
-    required: required,
-    selected: selected,
-    matches: required.every(req => selected.includes(req))
+  const matches = required.every(req => selected.includes(req));
+
+  console.log('🧠 Bundle match check:', {
+    required,
+    selected,
+    matches
   });
 
-  // Check if ALL required variants are selected
-  return required.every(req => selected.includes(req));
+  return matches;
 }
 
 
