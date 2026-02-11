@@ -575,56 +575,53 @@
     }
   }
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const variantId = document.getElementById(`variant-id-${sectionId}`).value;
-    if (!variantId) return alert('Please select all options');
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-    const btn = document.getElementById(`add-to-cart-btn-${sectionId}`);
-    btn.classList.add('loading');
-    btn.disabled = true;
+  const variantId = document.getElementById(`variant-id-${sectionId}`).value;
+  if (!variantId) return alert('Please select all options');
 
-    try {
-      // Add main product
-      await fetch('/cart/add.js', { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ id: variantId, quantity: 1 }) 
-      });
-      
-      // Add bundle if needed
-      if (shouldBundle()) await addBundle();
+  const btn = document.getElementById(`add-to-cart-btn-${sectionId}`);
+  btn.classList.add('loading');
+  btn.disabled = true;
 
-      btn.classList.remove('loading');
-      btn.querySelector('span').textContent = 'Added!';
-      
-      // THE WORKING FIX: Completely replace the cart-drawer element
-      setTimeout(async () => {
-        const response = await fetch(`${window.location.pathname}?sections=cart-drawer,cart-icon-bubble`);
-        const sections = await response.json();
-        
-        // CRITICAL: Replace the ENTIRE cart-drawer element, not just innerHTML
-        if (sections['cart-drawer']) {
-          const oldDrawer = document.querySelector('cart-drawer');
-          if (oldDrawer) {
-            const temp = document.createElement('div');
-            temp.innerHTML = sections['cart-drawer'];
-            const newDrawer = temp.querySelector('cart-drawer');
-            
-            if (newDrawer) {
-              // Replace the entire element in the DOM
-              oldDrawer.parentNode.replaceChild(newDrawer, oldDrawer);
-              
-              // Now open the newly inserted drawer
-              setTimeout(() => {
-                const drawer = document.querySelector('cart-drawer');
-                if (drawer && typeof drawer.open === 'function') {
-                  drawer.open();
-                }
-              }, 50);
-            }
-          }
-        }
+  try {
+    await fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: variantId, quantity: 1 })
+    });
+
+    // 🔑 KEY PART — refresh cart state
+    const cart = await fetch('/cart.js').then(r => r.json());
+
+    // 🔑 Horizon-specific drawer open
+    const drawer = document.querySelector('cart-drawer');
+    if (drawer) {
+      drawer.cart = cart;       // update state
+      drawer.open();            // open drawer
+    }
+
+    // update cart icon
+    document.dispatchEvent(new CustomEvent('cart:refresh'));
+
+    btn.classList.remove('loading');
+    btn.querySelector('span').textContent = 'Added!';
+
+    setTimeout(() => {
+      closeModal();
+      btn.querySelector('span').textContent = 'Add to Cart';
+      btn.disabled = false;
+    }, 400);
+
+  } catch (err) {
+    console.error(err);
+    alert('Failed to add product');
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+});
+
         
         // Update cart count
         if (sections['cart-icon-bubble']) {
