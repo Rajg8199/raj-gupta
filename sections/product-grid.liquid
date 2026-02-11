@@ -1,9 +1,5 @@
 
-
 <style>
-  /* ========================================
-     CSS Reset & Base Styles
-     ======================================== */
   .product-grid-section {
     position: relative;
     width: 100%;
@@ -15,11 +11,11 @@
     flex-direction: column;
   }
 
-h2.product-grid__heading {
+  h2.product-grid__heading {
     font-size: 36px;
     font-family:'Lustria-Regular';
     line-height: 120%;
-}
+  }
 
   .product-grid-section * {
     margin: 0;
@@ -27,9 +23,6 @@ h2.product-grid__heading {
     box-sizing: border-box;
   }
 
-  /* ========================================
-     Grid Container
-     ======================================== */
   .product-grid__container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -37,9 +30,6 @@ h2.product-grid__heading {
     max-width: 100%;
   }
 
-  /* ========================================
-     Product Card
-     ======================================== */
   .product-card {
     position: relative;
     aspect-ratio: 1 / 1;
@@ -66,7 +56,6 @@ h2.product-grid__heading {
     transform: scale(1.05);
   }
 
-  /* Quick View Button */
   .product-card__quick-view {
     position: absolute;
     top: 50%;
@@ -102,9 +91,6 @@ h2.product-grid__heading {
     height: 12px;
   }
 
-  /* ========================================
-     Quick View Modal
-     ======================================== */
   .quick-view-modal {
     display: none;
     position: fixed;
@@ -125,7 +111,7 @@ h2.product-grid__heading {
     opacity: 1;
   }
 
-.quick-view-modal__content {
+  .quick-view-modal__content {
     background-color: #ffffff;
     width: 90%;
     max-width: 380px;
@@ -137,13 +123,12 @@ h2.product-grid__heading {
     transform: scale(0.9);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-}
+  }
 
   .quick-view-modal.active .quick-view-modal__content {
     transform: scale(1);
   }
 
-  /* Close Button */
   .quick-view-modal__close {
     position: absolute;
     top: 16px;
@@ -169,12 +154,11 @@ h2.product-grid__heading {
     height: 20px;
   }
 
-  /* Product Image in Modal */
-.quick-view-modal__image-wrapper {
+  .quick-view-modal__image-wrapper {
     width: 100%;
     display: flex;
     align-items: flex-end;
-}
+  }
 
   .quick-view-modal__image {
     width: 100%;
@@ -182,56 +166,51 @@ h2.product-grid__heading {
     object-fit: cover;
   }
 
-  /* Product Details */
-
-
-.quick-view-modal__title {
+  .quick-view-modal__title {
     font-family: 'Jost-light';
     font-size: 16px;
     font-weight: 600;
     color: black;
     margin: 0;
     line-height: 1.3;
-}
+  }
 
-.quick-view-modal__price {
+  .quick-view-modal__price {
     font-family: 'Lustria-Regular';
     font-size: 16px;
     font-weight: 600;
     color: black;
     margin: 0;
-}
+  }
 
-.quick-view-modal__description {
+  .quick-view-modal__description {
     font-family: 'Jost-light';
     font-size: 14px;
     font-weight: 400;
     color: black;
     line-height: 110%;
     margin: 0;
-}
+  }
 
-  /* Variant Options */
   .quick-view-modal__option {
     margin-bottom: 20px;
   }
 
-.quick-view-modal__option-label {
+  .quick-view-modal__option-label {
     font-family: 'Jost-Regular';
     font-size: 14px;
     color: black;
     line-height: 130%;
     margin: 10px 0px;
     display: block;
-}
+  }
 
-  /* Color Swatches with Color Lines */
   .quick-view-modal__color-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
   }
 
-.quick-view-modal__color-option {
+  .quick-view-modal__color-option {
     position: relative;
     padding: 12px 16px 12px 24px;
     border: 0.5px solid black;
@@ -244,9 +223,8 @@ h2.product-grid__heading {
     transition: all 0.2s ease;
     text-align: center;
     overflow: hidden;
-}
+  }
 
-  /* Vertical color line on the left */
   .quick-view-modal__color-option::before {
     content: '';
     position: absolute;
@@ -262,20 +240,17 @@ h2.product-grid__heading {
     border-color: black;
   }
 
-  /* Selected state */
   .quick-view-modal__color-option.selected {
     border-color: black;
     background-color: black;
     color: #ffffff;
   }
 
-  /* Color line turns black when selected */
   .quick-view-modal__color-option.selected::before {
     background-color: black;
   }
 
-  /* Size Dropdown */
-.quick-view-modal__size-select {
+  .quick-view-modal__size-select {
     width: 100%;
     padding: 12px 16px;
     border: 0.5px solid black;
@@ -292,14 +267,13 @@ h2.product-grid__heading {
     background-repeat: no-repeat;
     background-position: right 16px center;
     padding-right: 40px;
-}
+  }
 
   .quick-view-modal__size-select:focus {
     outline: none;
     border-color: black;
   }
 
-  /* Add to Cart Button */
   .quick-view-modal__add-to-cart {
     width: 100%;
     padding: 16px;
@@ -337,7 +311,6 @@ h2.product-grid__heading {
     fill: currentColor;
   }
 
-  /* Loading State */
   .quick-view-modal__add-to-cart.loading {
     pointer-events: none;
   }
@@ -371,48 +344,22 @@ h2.product-grid__heading {
     justify-content: flex-end;
   }
 
-  .quick-view-modal__title {
-    font-size: 16px;
-    font-weight: 500;
-  }
-
-  .quick-view-modal__price {
-    font-size: 16px;
-    font-weight: 500;
-  }
-
-  .quick-view-modal__description {
-    font-size: 14px;
-    line-height: 1.4;
-    color: #666;
-  }
-
   @keyframes spin {
     to { transform: rotate(360deg); }
   }
 
-  /* ========================================
-     Mobile Responsive
-     ======================================== */
   @media screen and (max-width: 989px) {
     .product-grid-section {
       padding: 60px 32px 0px 32px;
     }
-
     h2.product-grid__heading {
       font-size: 30px;
     }
-
     .product-grid__container {
       grid-template-columns: repeat(2, 1fr);
     }
-
     .quick-view-modal__content {
       max-width: 95%;
-    }
-
-    .quick-view-modal__details {
-      padding: 20px;
     }
   }
 
@@ -421,39 +368,17 @@ h2.product-grid__heading {
       padding: 40px 16px 0px 16px;
       gap: 24px;
     }
-
     h2.product-grid__heading {
       font-size: 24px;
     }
-
-    .quick-view-modal__title {
-      font-size: 16px;
-    }
-
-    .quick-view-modal__price {
-      font-size: 15px;
-    }
-
-    .quick-view-modal__description {
-      font-size: 13px;
-    }
-
-    .quick-view-modal__details {
-      padding: 16px;
-    }
-    
     .quick-view-modal__top {
       grid-template-columns: 1fr;
     }
-
     .quick-view-modal__image-col img {
       height: 220px;
     }
   }
 
-  /* ========================================
-     Utility Classes
-     ======================================== */
   .hidden {
     display: none !important;
   }
@@ -465,53 +390,36 @@ h2.product-grid__heading {
 
 <section class="product-grid-section" id="product-grid-{{ section.id }}">
   {%- if section.settings.vision_text != blank -%}
-    <h2 class="product-grid__heading">
-      {{ section.settings.vision_text }}
-    </h2>
+    <h2 class="product-grid__heading">{{ section.settings.vision_text }}</h2>
   {%- endif -%}
 
   <div class="product-grid__container">
     {%- for block in section.blocks -%}
-      {%- if block.type == 'product' -%}
+      {%- if block.type == 'product' and block.settings.product != blank -%}
         {%- assign product = block.settings.product -%}
-        {%- if product != blank -%}
-          <div class="product-card" data-product-id="{{ product.id }}" data-block-id="{{ block.id }}">
-            <div class="product-card__image-wrapper">
-              {%- if product.featured_image -%}
-                <img 
-                  class="product-card__image"
-                  src="{{ product.featured_image | image_url: width: 800 }}"
-                  alt="{{ product.featured_image.alt | escape }}"
-                  loading="lazy"
-                >
-              {%- endif -%}
-              
-              <button 
-                class="product-card__quick-view" 
-                type="button"
-                aria-label="Quick view {{ product.title }}"
-                data-quick-view-trigger="{{ product.id }}"
-              >
-                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M4.98047 0.75V9.21154" stroke="black" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="round"/>
-                  <path d="M0.75 4.98071H9.21154" stroke="black" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="round"/>
-                </svg>
-              </button>
-            </div>
+        <div class="product-card" data-product-id="{{ product.id }}">
+          <div class="product-card__image-wrapper">
+            {%- if product.featured_image -%}
+              <img class="product-card__image" src="{{ product.featured_image | image_url: width: 800 }}" alt="{{ product.featured_image.alt | escape }}" loading="lazy">
+            {%- endif -%}
+            <button class="product-card__quick-view" type="button" aria-label="Quick view {{ product.title }}" data-quick-view-trigger="{{ product.id }}">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                <path d="M4.98047 0.75V9.21154" stroke="black" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="round"/>
+                <path d="M0.75 4.98071H9.21154" stroke="black" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="round"/>
+              </svg>
+            </button>
           </div>
-        {%- endif -%}
+        </div>
       {%- endif -%}
     {%- endfor -%}
   </div>
 </section>
 
-<!-- Quick View Modal -->
 <div class="quick-view-modal" id="quick-view-modal-{{ section.id }}">
   <div class="quick-view-modal__content">
     <button class="quick-view-modal__close" type="button" aria-label="Close">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="18" y1="6" x2="6" y2="18"/>
-        <line x1="6" y1="6" x2="18" y2="18"/>
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
       </svg>
     </button>
 
@@ -519,7 +427,6 @@ h2.product-grid__heading {
       <div class="quick-view-modal__image-col">
         <img class="quick-view-modal__image" id="modal-image-{{ section.id }}" />
       </div>
-
       <div class="quick-view-modal__info-col">
         <h2 class="quick-view-modal__title" id="modal-title-{{ section.id }}"></h2>
         <p class="quick-view-modal__price" id="modal-price-{{ section.id }}"></p>
@@ -528,24 +435,13 @@ h2.product-grid__heading {
     </div>
 
     <div class="quick-view-modal__details">
-      <form id="quick-view-form-{{ section.id }}" class="quick-view-modal__form">
-        <!-- Color Options -->
+      <form id="quick-view-form-{{ section.id }}">
         <div class="quick-view-modal__option" id="color-option-{{ section.id }}"></div>
-
-        <!-- Size Options -->
         <div class="quick-view-modal__option" id="size-option-{{ section.id }}"></div>
-
-        <!-- Hidden variant ID -->
         <input type="hidden" name="id" id="variant-id-{{ section.id }}">
-
-        <!-- Add to Cart Button -->
-        <button 
-          type="submit" 
-          class="quick-view-modal__add-to-cart"
-          id="add-to-cart-btn-{{ section.id }}"
-        >
+        <button type="submit" class="quick-view-modal__add-to-cart" id="add-to-cart-btn-{{ section.id }}">
           <span>Add to Cart</span>
-          <svg width="36" height="12" viewBox="0 0 36 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="36" height="12" viewBox="0 0 36 12" fill="none">
             <path d="M0.75 4.77295L9.20657e-08 4.77295L-9.20657e-08 6.27295L0.75 6.27295L0.75 4.77295ZM34.9798 6.05328C35.2727 5.76039 35.2727 5.28551 34.9798 4.99262L30.2068 0.21965C29.9139 -0.0732432 29.4391 -0.0732433 29.1462 0.21965C28.8533 0.512544 28.8533 0.987417 29.1462 1.28031L33.3888 5.52295L29.1462 9.76559C28.8533 10.0585 28.8533 10.5334 29.1462 10.8263C29.4391 11.1191 29.9139 11.1191 30.2068 10.8263L34.9798 6.05328ZM0.75 6.27295L34.4495 6.27295L34.4495 4.77295L0.75 4.77295L0.75 6.27295Z" fill="white"/>
           </svg>
         </button>
@@ -560,9 +456,8 @@ h2.product-grid__heading {
   const modal = document.getElementById(`quick-view-modal-${sectionId}`);
   const closeBtn = modal.querySelector('.quick-view-modal__close');
   const form = document.getElementById(`quick-view-form-${sectionId}`);
-  const bundleVariantCache = {};
+  const cache = {};
   
-  // Color mapping for variant display
   const colorMap = {
     'black': '#000000', 'white': '#FFFFFF', 'grey': '#808080', 'gray': '#808080',
     'red': '#FF0000', 'blue': '#0000FF', 'green': '#008000', 'yellow': '#FFFF00',
@@ -571,83 +466,47 @@ h2.product-grid__heading {
     'teal': '#008080', 'silver': '#C0C0C0', 'gold': '#FFD700', 'cream': '#FFFDD0'
   };
   
-  function getColorHex(colorName) {
-    return colorMap[colorName.toLowerCase().trim()] || '#e0e0e0';
-  }
-  
-  // Product data storage
   const products = {
     {%- for block in section.blocks -%}
-      {%- if block.type == 'product' -%}
+      {%- if block.type == 'product' and block.settings.product != blank -%}
         {%- assign product = block.settings.product -%}
-        {%- if product != blank -%}
-          '{{ product.id }}': {
-            id: {{ product.id }},
-            title: {{ product.title | json }},
-            price: {{ product.price | json }},
-            priceFormatted: {{ product.price | money | json }},
-            description: {{ product.description | strip_html | truncate: 150 | json }},
-            image: {{ product.featured_image | image_url: width: 800 | json }},
-            variants: [
-              {%- for variant in product.variants -%}
-                {
-                  id: {{ variant.id }},
-                  title: {{ variant.title | json }},
-                  price: {{ variant.price | json }},
-                  priceFormatted: {{ variant.price | money | json }},
-                  available: {{ variant.available | json }},
-                  option1: {{ variant.option1 | json }},
-                  option2: {{ variant.option2 | json }},
-                  option3: {{ variant.option3 | json }}
-                }{%- unless forloop.last -%},{%- endunless -%}
-              {%- endfor -%}
-            ],
-            options: [
-              {%- for option in product.options_with_values -%}
-                {
-                  name: {{ option.name | json }},
-                  position: {{ option.position }},
-                  values: {{ option.values | json }}
-                }{%- unless forloop.last -%},{%- endunless -%}
-              {%- endfor -%}
-            ],
-            bundleVariantCheck: {{ block.settings.bundle_variant_check | json }},
-            bundleProductHandle: {{ block.settings.bundle_product_handle | json }}
-          }{%- unless forloop.last -%},{%- endunless -%}
-        {%- endif -%}
+        '{{ product.id }}': {
+          id: {{ product.id }},
+          title: {{ product.title | json }},
+          priceFormatted: {{ product.price | money | json }},
+          description: {{ product.description | strip_html | truncate: 150 | json }},
+          image: {{ product.featured_image | image_url: width: 800 | json }},
+          variants: [{%- for variant in product.variants -%}
+            { id: {{ variant.id }}, priceFormatted: {{ variant.price | money | json }}, available: {{ variant.available | json }}, option1: {{ variant.option1 | json }}, option2: {{ variant.option2 | json }}, option3: {{ variant.option3 | json }} }{%- unless forloop.last -%},{%- endunless -%}
+          {%- endfor -%}],
+          options: [{%- for option in product.options_with_values -%}
+            { name: {{ option.name | json }}, position: {{ option.position }}, values: {{ option.values | json }} }{%- unless forloop.last -%},{%- endunless -%}
+          {%- endfor -%}],
+          bundleCheck: {{ block.settings.bundle_variant_check | json }},
+          bundleHandle: {{ block.settings.bundle_product_handle | json }}
+        }{%- unless forloop.last -%},{%- endunless -%}
       {%- endif -%}
     {%- endfor -%}
   };
 
-  let currentProduct = null;
-  let selectedOptions = {};
+  let current = null, selected = {};
 
-  // Open modal
   document.querySelectorAll('[data-quick-view-trigger]').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      openQuickView(btn.getAttribute('data-quick-view-trigger'));
-    });
+    btn.addEventListener('click', (e) => { e.stopPropagation(); openModal(btn.getAttribute('data-quick-view-trigger')); });
   });
 
-  // Close modal
   closeBtn.addEventListener('click', closeModal);
   modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
-  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('active')) closeModal(); });
 
-  function openQuickView(productId) {
-    currentProduct = products[productId];
-    if (!currentProduct) return;
-
-    document.getElementById(`modal-title-${sectionId}`).textContent = currentProduct.title;
-    document.getElementById(`modal-price-${sectionId}`).textContent = currentProduct.priceFormatted;
-    document.getElementById(`modal-description-${sectionId}`).textContent = currentProduct.description;
-    document.getElementById(`modal-image-${sectionId}`).src = currentProduct.image;
-    document.getElementById(`modal-image-${sectionId}`).alt = currentProduct.title;
-
-    selectedOptions = {};
+  function openModal(id) {
+    current = products[id];
+    if (!current) return;
+    document.getElementById(`modal-title-${sectionId}`).textContent = current.title;
+    document.getElementById(`modal-price-${sectionId}`).textContent = current.priceFormatted;
+    document.getElementById(`modal-description-${sectionId}`).textContent = current.description;
+    document.getElementById(`modal-image-${sectionId}`).src = current.image;
+    selected = {};
     renderOptions();
     modal.classList.add('active');
     document.body.classList.add('modal-open');
@@ -656,225 +515,127 @@ h2.product-grid__heading {
   function closeModal() {
     modal.classList.remove('active');
     document.body.classList.remove('modal-open');
-    currentProduct = null;
-    selectedOptions = {};
+    current = null;
+    selected = {};
   }
 
   function renderOptions() {
-    const colorContainer = document.getElementById(`color-option-${sectionId}`);
-    const sizeContainer = document.getElementById(`size-option-${sectionId}`);
+    const colorEl = document.getElementById(`color-option-${sectionId}`);
+    const sizeEl = document.getElementById(`size-option-${sectionId}`);
+    colorEl.innerHTML = '';
+    sizeEl.innerHTML = '';
 
-    colorContainer.innerHTML = '';
-    sizeContainer.innerHTML = '';
-
-    currentProduct.options.forEach((option) => {
-      const optionName = option.name.toLowerCase();
-      
-      if (optionName === 'color' || optionName === 'colour') {
-        colorContainer.innerHTML = `
-          <label class="quick-view-modal__option-label">Color</label>
-          <div class="quick-view-modal__color-grid" id="color-grid-${sectionId}"></div>
-        `;
-
-        const colorGrid = document.getElementById(`color-grid-${sectionId}`);
-        option.values.forEach(value => {
+    current.options.forEach(opt => {
+      const name = opt.name.toLowerCase();
+      if (name === 'color' || name === 'colour') {
+        colorEl.innerHTML = `<label class="quick-view-modal__option-label">Color</label><div class="quick-view-modal__color-grid" id="color-grid-${sectionId}"></div>`;
+        const grid = document.getElementById(`color-grid-${sectionId}`);
+        opt.values.forEach(val => {
           const btn = document.createElement('button');
           btn.type = 'button';
           btn.className = 'quick-view-modal__color-option';
-          btn.textContent = value;
-          btn.dataset.optionPosition = option.position;
-          btn.style.setProperty('--color-value', getColorHex(value));
-
+          btn.textContent = val;
+          btn.style.setProperty('--color-value', colorMap[val.toLowerCase().trim()] || '#e0e0e0');
           btn.addEventListener('click', () => {
             document.querySelectorAll('.quick-view-modal__color-option').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
-            selectedOptions[`option${option.position}`] = value;
+            selected[`option${opt.position}`] = val;
             updateVariant();
           });
-
-          colorGrid.appendChild(btn);
+          grid.appendChild(btn);
         });
-
-      } else if (optionName === 'size') {
-        sizeContainer.innerHTML = `
-          <label class="quick-view-modal__option-label">Size</label>
-          <select class="quick-view-modal__size-select" id="size-select-${sectionId}" required>
-            <option value="">Choose your size</option>
-            ${option.values.map(value => `<option value="${value}">${value}</option>`).join('')}
-          </select>
-        `;
-
+      } else if (name === 'size') {
+        sizeEl.innerHTML = `<label class="quick-view-modal__option-label">Size</label><select class="quick-view-modal__size-select" id="size-select-${sectionId}" required><option value="">Choose your size</option>${opt.values.map(v => `<option value="${v}">${v}</option>`).join('')}</select>`;
         document.getElementById(`size-select-${sectionId}`).addEventListener('change', (e) => {
-          selectedOptions[`option${option.position}`] = e.target.value;
+          selected[`option${opt.position}`] = e.target.value;
           updateVariant();
         });
       }
     });
-
     updateVariant();
   }
 
   function updateVariant() {
-    const addToCartBtn = document.getElementById(`add-to-cart-btn-${sectionId}`);
-    const variant = currentProduct.variants.find(v => {
-      return (
-        (!selectedOptions.option1 || v.option1 === selectedOptions.option1) &&
-        (!selectedOptions.option2 || v.option2 === selectedOptions.option2) &&
-        (!selectedOptions.option3 || v.option3 === selectedOptions.option3)
-      );
-    });
+    const btn = document.getElementById(`add-to-cart-btn-${sectionId}`);
+    const variant = current.variants.find(v => 
+      (!selected.option1 || v.option1 === selected.option1) &&
+      (!selected.option2 || v.option2 === selected.option2) &&
+      (!selected.option3 || v.option3 === selected.option3)
+    );
 
-    if (variant && Object.keys(selectedOptions).length === currentProduct.options.length) {
+    if (variant && Object.keys(selected).length === current.options.length) {
       document.getElementById(`variant-id-${sectionId}`).value = variant.id;
       document.getElementById(`modal-price-${sectionId}`).textContent = variant.priceFormatted;
-      addToCartBtn.disabled = !variant.available;
-      addToCartBtn.querySelector('span').textContent = variant.available ? 'Add to Cart' : 'Sold Out';
+      btn.disabled = !variant.available;
+      btn.querySelector('span').textContent = variant.available ? 'Add to Cart' : 'Sold Out';
     } else {
       document.getElementById(`variant-id-${sectionId}`).value = '';
-      addToCartBtn.disabled = true;
+      btn.disabled = true;
     }
   }
 
-  // Form submission
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
     const variantId = document.getElementById(`variant-id-${sectionId}`).value;
-    if (!variantId) {
-      alert('Please select all options');
-      return;
-    }
+    if (!variantId) return alert('Please select all options');
 
-    const addToCartBtn = document.getElementById(`add-to-cart-btn-${sectionId}`);
-    addToCartBtn.classList.add('loading');
-    addToCartBtn.disabled = true;
+    const btn = document.getElementById(`add-to-cart-btn-${sectionId}`);
+    btn.classList.add('loading');
+    btn.disabled = true;
 
     try {
-      await addToCart(variantId, 1);
+      await fetch('/cart/add.js', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: variantId, quantity: 1 }) });
+      if (shouldBundle()) await addBundle();
 
-      if (shouldAddBundle()) {
-        await addBundleProduct();
-      }
-
-      addToCartBtn.classList.remove('loading');
-      addToCartBtn.querySelector('span').textContent = 'Added!';
+      btn.classList.remove('loading');
+      btn.querySelector('span').textContent = 'Added!';
       
-      // Refresh cart for Horizon theme
-      await refreshHorizonCart();
+      // CRITICAL FIX: Refresh cart using PubSub
+      const cart = await fetch('/cart.js').then(r => r.json());
+      if (window.PubSub) {
+        window.PubSub.publish('cart-updated', cart);
+      }
 
       setTimeout(() => {
         closeModal();
-        addToCartBtn.querySelector('span').textContent = 'Add to Cart';
-        addToCartBtn.disabled = false;
+        btn.querySelector('span').textContent = 'Add to Cart';
+        btn.disabled = false;
       }, 1000);
 
     } catch (error) {
-      console.error('Error:', error);
-      alert('Error adding to cart. Please try again.');
-      addToCartBtn.classList.remove('loading');
-      addToCartBtn.disabled = false;
+      alert('Error adding to cart');
+      btn.classList.remove('loading');
+      btn.disabled = false;
     }
   });
 
-  // Horizon theme cart refresh
-  async function refreshHorizonCart() {
-    try {
-      const cart = await fetch('/cart.js').then(r => r.json());
-      
-      // Update count
-      document.querySelectorAll('.cart-count-bubble, [data-cart-count], #cart-icon-bubble').forEach(el => {
-        const textEl = el.querySelector('span') || el;
-        textEl.textContent = cart.item_count;
-        el.style.display = cart.item_count > 0 ? '' : 'none';
-      });
-
-      // Refresh sections
-      const response = await fetch(`${window.location.pathname}?sections=cart-drawer,cart-icon-bubble`);
-      const sections = await response.json();
-
-      if (sections['cart-drawer']) {
-        const drawer = document.querySelector('cart-drawer');
-        if (drawer) {
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(sections['cart-drawer'], 'text/html');
-          const newContent = doc.querySelector('cart-drawer');
-          if (newContent) drawer.innerHTML = newContent.innerHTML;
-        }
-      }
-
-      // Trigger events
-      ['cart:updated', 'cart:refresh'].forEach(eventName => {
-        document.documentElement.dispatchEvent(new CustomEvent(eventName, { bubbles: true, detail: { cart } }));
-      });
-
-      // Open drawer
-      setTimeout(() => {
-        const drawer = document.querySelector('cart-drawer');
-        if (drawer) {
-          if (typeof drawer.open === 'function') drawer.open();
-          else {
-            drawer.classList.add('active', 'is-open');
-            drawer.setAttribute('open', '');
-          }
-        }
-      }, 200);
-
-    } catch (error) {
-      console.error('Cart refresh error:', error);
-    }
+  function normalize(v) {
+    if (!v) return '';
+    const map = { 'small': 's', 's': 's', 'medium': 'm', 'm': 'm', 'large': 'l', 'l': 'l', 'extra large': 'xl', 'x-large': 'xl', 'xl': 'xl', 'extra small': 'xs', 'x-small': 'xs', 'xs': 'xs' };
+    return map[v.toString().trim().toLowerCase()] || v.toString().trim().toLowerCase();
   }
 
-  function normalizeOptionValue(value) {
-    if (!value) return '';
-    const v = value.toString().trim().toLowerCase();
-    const sizeMap = {
-      'small': 's', 's': 's', 'medium': 'm', 'm': 'm', 'large': 'l', 'l': 'l',
-      'extra large': 'xl', 'x-large': 'xl', 'xl': 'xl',
-      'extra small': 'xs', 'x-small': 'xs', 'xs': 'xs'
-    };
-    return sizeMap[v] || v;
+  function shouldBundle() {
+    if (!current.bundleCheck || !current.bundleHandle) return false;
+    const req = current.bundleCheck.split(',').map(v => normalize(v));
+    const sel = Object.values(selected).filter(Boolean).map(v => normalize(v));
+    return req.every(r => sel.includes(r));
   }
 
-  function shouldAddBundle() {
-    if (!currentProduct.bundleVariantCheck || !currentProduct.bundleProductHandle) return false;
-
-    const required = currentProduct.bundleVariantCheck.split(',').map(v => normalizeOptionValue(v));
-    const selected = Object.values(selectedOptions).filter(Boolean).map(v => normalizeOptionValue(v));
-    
-    return required.every(req => selected.includes(req));
-  }
-
-  async function addBundleProduct() {
-    const bundleHandle = currentProduct.bundleProductHandle;
+  async function addBundle() {
     const cart = await fetch('/cart.js').then(r => r.json());
-    
-    if (cart.items.some(item => item.handle === bundleHandle)) return;
+    if (cart.items.some(i => i.handle === current.bundleHandle)) return;
 
-    if (!bundleVariantCache[bundleHandle]) {
-      const res = await fetch(`/products/${bundleHandle}.js`);
+    if (!cache[current.bundleHandle]) {
+      const res = await fetch(`/products/${current.bundleHandle}.js`);
       if (!res.ok) return;
       const data = await res.json();
       const variant = data.variants.find(v => v.available);
       if (!variant) return;
-      bundleVariantCache[bundleHandle] = variant.id;
+      cache[current.bundleHandle] = variant.id;
     }
 
-    return addToCart(bundleVariantCache[bundleHandle], 1);
-  }
-
-  async function addToCart(variantId, quantity) {
-    const response = await fetch('/cart/add.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: variantId, quantity: quantity })
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.description || 'Failed to add to cart');
-    }
-
-    return response.json();
+    await fetch('/cart/add.js', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: cache[current.bundleHandle], quantity: 1 }) });
   }
 })();
 </script>
@@ -884,49 +645,17 @@ h2.product-grid__heading {
   "name": "Product Grid",
   "tag": "section",
   "class": "section-product-grid",
-  "settings": [
-    {
-      "type": "text",
-      "id": "vision_text",
-      "label": "Vision text",
-      "default": "Tisso vision in the wild"
-    }
-  ],
-  "blocks": [
-    {
-      "type": "product",
-      "name": "Product",
-      "settings": [
-        {
-          "type": "product",
-          "id": "product",
-          "label": "Product"
-        },
-        {
-          "type": "header",
-          "content": "Auto-Bundle Settings"
-        },
-        {
-          "type": "text",
-          "id": "bundle_variant_check",
-          "label": "Bundle trigger variants",
-          "info": "Enter variant options separated by commas (e.g., 'Black, Medium'). When this product is added with these options, the bundle product will be added automatically.",
-          "placeholder": "Black, Medium"
-        },
-        {
-          "type": "text",
-          "id": "bundle_product_handle",
-          "label": "Bundle product handle",
-          "info": "The handle of the product to add automatically (e.g., 'soft-winter-jacket')"
-        }
-      ]
-    }
-  ],
-  "presets": [
-    {
-      "name": "Product Grid",
-      "category": "Custom"
-    }
-  ]
+  "settings": [{ "type": "text", "id": "vision_text", "label": "Vision text", "default": "Tisso vision in the wild" }],
+  "blocks": [{
+    "type": "product",
+    "name": "Product",
+    "settings": [
+      { "type": "product", "id": "product", "label": "Product" },
+      { "type": "header", "content": "Auto-Bundle Settings" },
+      { "type": "text", "id": "bundle_variant_check", "label": "Bundle trigger variants", "info": "e.g., 'Black, Medium'", "placeholder": "Black, Medium" },
+      { "type": "text", "id": "bundle_product_handle", "label": "Bundle product handle" }
+    ]
+  }],
+  "presets": [{ "name": "Product Grid", "category": "Custom" }]
 }
 {% endschema %}
