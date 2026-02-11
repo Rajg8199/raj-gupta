@@ -583,92 +583,113 @@
     btn.disabled = true;
 
     try {
+      console.log('🛒 Adding to cart...');
+      
       // Add main product
-      await fetch('/cart/add.js', { 
+      const formData = new FormData();
+      formData.append('id', variantId);
+      formData.append('quantity', 1);
+      
+      const addResponse = await fetch('/cart/add.js', { 
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
         body: JSON.stringify({ id: variantId, quantity: 1 }) 
       });
       
+      if (!addResponse.ok) throw new Error('Failed to add to cart');
+      
       // Add bundle if needed
       if (shouldBundle()) {
+        console.log('📦 Adding bundle...');
         await addBundle();
       }
 
       btn.classList.remove('loading');
       btn.querySelector('span').textContent = 'Added!';
       
-      // HORIZON THEME SPECIFIC: Update cart and open drawer
+      console.log('✅ Products added to cart');
+      
+      // CRITICAL: Trigger the exact same flow as Horizon's ATC button
       setTimeout(async () => {
-        try {
-          // Step 1: Fetch updated sections FIRST
-          console.log('🔄 Fetching cart sections...');
-          const sectionsToRender = ['cart-drawer', 'cart-icon-bubble'];
-          const response = await fetch(`${window.location.pathname}?sections=${sectionsToRender.join(',')}`);
-          const sections = await response.json();
-          
-          // Step 2: Update cart drawer HTML
-          if (sections['cart-drawer']) {
-            const drawer = document.querySelector('cart-drawer');
-            if (drawer) {
-              console.log('📦 Updating cart drawer content...');
-              const parser = new DOMParser();
-              const doc = parser.parseFromString(sections['cart-drawer'], 'text/html');
-              const newDrawerContent = doc.querySelector('cart-drawer');
-              
-              if (newDrawerContent) {
-                // Replace entire cart-drawer element to get fresh Alpine.js bindings
-                const parent = drawer.parentElement;
-                parent.replaceChild(newDrawerContent, drawer);
-                
-                // Reinitialize Alpine.js on the new element if Alpine is available
-                if (window.Alpine) {
-                  window.Alpine.initTree(newDrawerContent);
-                }
-                
-                console.log('✅ Cart drawer content updated');
-              }
-            }
-          }
-          
-          // Step 3: Update cart bubble/count
-          const cart = await fetch('/cart.js').then(r => r.json());
-          const bubble = document.querySelector('.cart-bubble__text-count, [data-testid="cart-bubble"]');
-          if (bubble) {
-            bubble.textContent = cart.item_count;
-            if (cart.item_count > 0) {
-              bubble.classList.remove('hidden');
-            }
+        // Method 1: Fetch updated cart
+        const cartResponse = await fetch('/cart.js');
+        const cart = await cartResponse.json();
+        console.log('📦 Cart updated, items:', cart.item_count);
+        
+        // Method 2: Fetch sections the way Horizon does
+        const sectionsUrl = `${window.location.pathname}?sections=cart-drawer,cart-icon-bubble`;
+        const sectionsResponse = await fetch(sectionsUrl);
+        const sectionsData = await sectionsResponse.json();
+        
+        console.log('📄 Sections fetched');
+        
+        // Method 3: Find and replace cart-drawer
+        if (sectionsData['cart-drawer']) {
+          const currentDrawer = document.querySelector('cart-drawer');
+          if (currentDrawer) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = sectionsData['cart-drawer'];
+            const newDrawer = tempDiv.querySelector('cart-drawer');
             
-            // Update screen reader text
-            const hiddenText = document.querySelector('#cart-bubble-text .visually-hidden');
-            if (hiddenText) {
-              hiddenText.textContent = `Total items in cart: ${cart.item_count}`;
+            if (newDrawer) {
+              // Replace in DOM
+              currentDrawer.parentNode.replaceChild(newDrawer, currentDrawer);
+              
+              // Initialize Alpine if available
+              if (window.Alpine && window.Alpine.initTree) {
+                window.Alpine.initTree(newDrawer);
+              }
+              
+              console.log('✅ Cart drawer replaced');
             }
-            console.log('✅ Cart count updated:', cart.item_count);
           }
-          
-          // Step 4: Open the cart drawer (after content is updated)
-          setTimeout(() => {
-            const cartButton = document.querySelector('[data-testid="cart-drawer-trigger"], button[on\\:click*="/open"]');
-            if (cartButton) {
-              console.log('🚪 Opening cart drawer...');
-              cartButton.click();
-            }
-          }, 100);
-          
-        } catch (err) {
-          console.error('❌ Cart update failed:', err);
         }
-
-        // Close quick view modal
-        closeModal();
-        btn.querySelector('span').textContent = 'Add to Cart';
-        btn.disabled = false;
-      }, 400);
+        
+        // Method 4: Update cart count bubble
+        if (sectionsData['cart-icon-bubble']) {
+          const bubble = document.querySelector('cart-icon');
+          if (bubble) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = sectionsData['cart-icon-bubble'];
+            const newBubble = tempDiv.querySelector('cart-icon');
+            if (newBubble) {
+              bubble.innerHTML = newBubble.innerHTML;
+            }
+          }
+        }
+        
+        // Method 5: Trigger global events that Horizon might listen to
+        window.dispatchEvent(new CustomEvent('cart:updated', { detail: { cart } }));
+        document.dispatchEvent(new CustomEvent('cart:refresh', { detail: { cart } }));
+        document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', { 
+          bubbles: true, 
+          detail: { cart } 
+        }));
+        
+        console.log('📡 Events dispatched');
+        
+        // Method 6: Click cart to open drawer
+        setTimeout(() => {
+          const cartBtn = document.querySelector('[data-testid="cart-drawer-trigger"]');
+          if (cartBtn) {
+            console.log('🚪 Clicking cart button...');
+            cartBtn.click();
+          } else {
+            console.log('❌ Cart button not found');
+          }
+        }, 200);
+        
+        // Close modal
+        setTimeout(() => {
+          closeModal();
+          btn.querySelector('span').textContent = 'Add to Cart';
+          btn.disabled = false;
+        }, 300);
+        
+      }, 100);
 
     } catch (error) {
-      console.error('Add to cart error:', error);
+      console.error('❌ Add to cart error:', error);
       alert('Error adding to cart');
       btn.classList.remove('loading');
       btn.disabled = false;
