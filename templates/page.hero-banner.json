@@ -83,8 +83,8 @@
           "type": "product",
           "settings": {
             "product": "black-leather-bag",
-            "bundle_variant_check": "",
-            "bundle_product_handle": ""
+            "bundle_variant_check": "Black, Medium",
+            "bundle_product_handle": "dark-winter-jacket"
           }
         },
         "product_9c7wzp": {
@@ -99,32 +99,32 @@
           "type": "product",
           "settings": {
             "product": "chequered-red-shirt",
-            "bundle_variant_check": "",
-            "bundle_product_handle": ""
+            "bundle_variant_check": "Black, Medium",
+            "bundle_product_handle": "dark-winter-jacket"
           }
         },
         "product_JfhFFN": {
           "type": "product",
           "settings": {
             "product": "classic-leather-jacket",
-            "bundle_variant_check": "",
-            "bundle_product_handle": ""
+            "bundle_variant_check": "Black, Medium",
+            "bundle_product_handle": "dark-winter-jacket"
           }
         },
         "product_4bPWrF": {
           "type": "product",
           "settings": {
             "product": "classic-varsity-top",
-            "bundle_variant_check": "",
-            "bundle_product_handle": ""
+            "bundle_variant_check": "Black, Medium",
+            "bundle_product_handle": "dark-winter-jacket"
           }
         },
         "product_Np7eDH": {
           "type": "product",
           "settings": {
             "product": "dark-denim-top",
-            "bundle_variant_check": "",
-            "bundle_product_handle": ""
+            "bundle_variant_check": "Black, Medium",
+            "bundle_product_handle": "dark-winter-jacket"
           }
         }
       },
@@ -140,65 +140,11 @@
       "settings": {
         "vision_text": "Tisso vision in the wild"
       }
-    },
-    "custom_product_grid_YMLPhj": {
-      "type": "custom-product-grid",
-      "blocks": {
-        "product_NktXYz": {
-          "type": "product",
-          "settings": {
-            "product": "black-leather-bag"
-          }
-        },
-        "product_UzTbEf": {
-          "type": "product",
-          "settings": {
-            "product": "blue-silk-tuxedo"
-          }
-        },
-        "product_zTHD8W": {
-          "type": "product",
-          "settings": {
-            "product": "chequered-red-shirt"
-          }
-        },
-        "product_KmCPEq": {
-          "type": "product",
-          "settings": {
-            "product": "classic-leather-jacket"
-          }
-        },
-        "product_CLPmMe": {
-          "type": "product",
-          "settings": {
-            "product": "classic-varsity-top"
-          }
-        },
-        "product_TtHWgX": {
-          "type": "product",
-          "settings": {
-            "product": "dark-denim-top"
-          }
-        }
-      },
-      "block_order": [
-        "product_NktXYz",
-        "product_UzTbEf",
-        "product_zTHD8W",
-        "product_KmCPEq",
-        "product_CLPmMe",
-        "product_TtHWgX"
-      ],
-      "name": "Custom Product Grid",
-      "settings": {
-        "heading": "Tisso vision in the wild"
-      }
     }
   },
   "order": [
     "main",
     "banner_Mz8LeT",
-    "product_grid_8DgRnW",
-    "custom_product_grid_YMLPhj"
+    "product_grid_8DgRnW"
   ]
 }
