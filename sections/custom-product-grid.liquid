@@ -29,12 +29,13 @@
   </div>
 
   <!-- MODAL -->
-  <div class="product-modal" hidden>
-    <div class="modal-overlay"></div>
+<div class="product-modal" hidden>
+  <div class="modal-overlay"></div>
 
-    <div class="modal-content">
-      <button class="modal-close">×</button>
+  <div class="modal-card">
+    <button class="modal-close">×</button>
 
+    <div class="modal-body">
       <div class="modal-header">
         <img class="modal-image" src="" alt="">
         <div class="modal-info">
@@ -45,12 +46,16 @@
       </div>
 
       <div class="modal-options"></div>
+    </div>
 
+    <div class="modal-footer">
       <button class="add-to-cart-btn">
         ADD TO CART →
       </button>
     </div>
   </div>
+</div>
+
 </section>
 
 <style>
@@ -94,9 +99,9 @@
   border: 1px solid #000;
 }
 
-/* ------------------------------
-   Modal
--------------------------------- */
+/* ===============================
+   Modal Shell
+================================ */
 .product-modal {
   position: fixed;
   inset: 0;
@@ -106,47 +111,81 @@
 .modal-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,.5);
+  background: rgba(0,0,0,.4);
 }
 
-.modal-content {
+/* ===============================
+   Modal Card (DESKTOP)
+================================ */
+.modal-card {
+  position: absolute;
+  top: 80px;
+  right: 40px;
+  width: 420px;
+  max-height: calc(100vh - 120px);
   background: var(--color-background, #fff);
-  color: var(--color-text, #000);
-  max-width: 420px;
-  width: 100%;
-  margin: auto;
-  padding: 24px;
-  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
+/* Close button */
 .modal-close {
   position: absolute;
   top: 12px;
   right: 12px;
-  font-size: 20px;
+  font-size: 18px;
 }
 
+/* ===============================
+   Modal Body
+================================ */
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* Header layout */
 .modal-header {
   display: flex;
   gap: 16px;
+  margin-bottom: 20px;
 }
 
 .modal-image {
-  width: 120px;
+  width: 96px;
+  height: auto;
 }
 
-.modal-options {
-  margin-top: 24px;
+.modal-title {
+  margin: 0 0 4px;
 }
 
+.modal-price {
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+.modal-description {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* ===============================
+   Options
+================================ */
 .option-group {
   margin-bottom: 16px;
 }
 
+.option-group p {
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
 .option-group button {
+  padding: 8px 12px;
   margin-right: 8px;
-  margin-top: 8px;
-  padding: 6px 12px;
+  margin-bottom: 8px;
   border: 1px solid #000;
   background: #fff;
 }
@@ -156,12 +195,37 @@
   color: #fff;
 }
 
+/* ===============================
+   Footer (CTA)
+================================ */
+.modal-footer {
+  padding: 16px;
+  border-top: 1px solid #e5e5e5;
+}
+
 .add-to-cart-btn {
-  margin-top: 24px;
   width: 100%;
   padding: 14px;
   background: #000;
   color: #fff;
+}
+
+/* ===============================
+   MOBILE
+================================ */
+@media (max-width: 768px) {
+  .modal-card {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-height: 100%;
+  }
+
+  .modal-footer {
+    position: sticky;
+    bottom: 0;
+    background: #fff;
+  }
 }
 
 /* ------------------------------
