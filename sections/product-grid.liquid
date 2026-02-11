@@ -826,13 +826,20 @@ function updateVariant() {
       console.log('🔄 Triggering cart refresh...');
       
       // Method 1: Shopify Section Rendering API
-document.dispatchEvent(
-  new CustomEvent('cart:added', {
-    bubbles: true,
-    detail: { variantId }
-  })
-);
-
+      fetch(window.location.href + '?sections=cart-drawer,cart-icon-bubble')
+        .then(response => response.json())
+        .then(sections => {
+          if (sections['cart-drawer']) {
+            const cartDrawer = document.querySelector('cart-drawer');
+            if (cartDrawer) {
+              cartDrawer.getSectionsToRender().forEach((section) => {
+                const sectionElement = document.getElementById(section.id);
+                if (sectionElement) {
+                  sectionElement.innerHTML = sections[section.section];
+                }
+              });
+            }
+          }
           if (sections['cart-icon-bubble']) {
             const cartBubble = document.querySelector('.cart-count-bubble');
             if (cartBubble) {
