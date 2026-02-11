@@ -586,57 +586,110 @@
       console.log('🛒 Adding to cart...');
       
       // Add main product
-      await fetch('/cart/add.js', { 
+      const formData = new FormData();
+      formData.append('id', variantId);
+      formData.append('quantity', 1);
+      
+      const addResponse = await fetch('/cart/add.js', { 
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
         body: JSON.stringify({ id: variantId, quantity: 1 }) 
       });
       
-      console.log('✅ Main product added');
+      if (!addResponse.ok) throw new Error('Failed to add to cart');
       
       // Add bundle if needed
       if (shouldBundle()) {
         console.log('📦 Adding bundle...');
         await addBundle();
-        console.log('✅ Bundle added');
       }
 
       btn.classList.remove('loading');
       btn.querySelector('span').textContent = 'Added!';
       
-      // HORIZON THEME SOLUTION: Use the exact method from documentation
+      console.log('✅ Products added to cart');
+      
+      // CRITICAL: Trigger the exact same flow as Horizon's ATC button
       setTimeout(async () => {
-        console.log('🔄 Refreshing cart drawer...');
+        // Method 1: Fetch updated cart
+        const cartResponse = await fetch('/cart.js');
+        const cart = await cartResponse.json();
+        console.log('📦 Cart updated, items:', cart.item_count);
         
-        // Fetch updated cart data
-        const cart = await fetch('/cart.js').then(res => res.json());
-        console.log('📦 Cart data fetched:', cart.item_count, 'items');
+        // Method 2: Fetch sections the way Horizon does
+        const sectionsUrl = `${window.location.pathname}?sections=cart-drawer,cart-icon-bubble`;
+        const sectionsResponse = await fetch(sectionsUrl);
+        const sectionsData = await sectionsResponse.json();
         
-        // CRITICAL: Dispatch the cart:refresh event with proper detail object
-        // This is what Horizon theme listens for!
-        document.documentElement.dispatchEvent(
-          new CustomEvent('cart:refresh', {
-            bubbles: true,
-            detail: {
-              cart: cart,
-              openMiniCart: true  // This tells Horizon to open the drawer
+        console.log('📄 Sections fetched');
+        
+        // Method 3: Find and replace cart-drawer
+        if (sectionsData['cart-drawer']) {
+          const currentDrawer = document.querySelector('cart-drawer');
+          if (currentDrawer) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = sectionsData['cart-drawer'];
+            const newDrawer = tempDiv.querySelector('cart-drawer');
+            
+            if (newDrawer) {
+              // Replace in DOM
+              currentDrawer.parentNode.replaceChild(newDrawer, currentDrawer);
+              
+              // Initialize Alpine if available
+              if (window.Alpine && window.Alpine.initTree) {
+                window.Alpine.initTree(newDrawer);
+              }
+              
+              console.log('✅ Cart drawer replaced');
             }
-          })
-        );
+          }
+        }
         
-        console.log('📡 cart:refresh event dispatched');
+        // Method 4: Update cart count bubble
+        if (sectionsData['cart-icon-bubble']) {
+          const bubble = document.querySelector('cart-icon');
+          if (bubble) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = sectionsData['cart-icon-bubble'];
+            const newBubble = tempDiv.querySelector('cart-icon');
+            if (newBubble) {
+              bubble.innerHTML = newBubble.innerHTML;
+            }
+          }
+        }
         
-        // Close modal after a short delay
+        // Method 5: Trigger global events that Horizon might listen to
+        window.dispatchEvent(new CustomEvent('cart:updated', { detail: { cart } }));
+        document.dispatchEvent(new CustomEvent('cart:refresh', { detail: { cart } }));
+        document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', { 
+          bubbles: true, 
+          detail: { cart } 
+        }));
+        
+        console.log('📡 Events dispatched');
+        
+        // Method 6: Click cart to open drawer
+        setTimeout(() => {
+          const cartBtn = document.querySelector('[data-testid="cart-drawer-trigger"]');
+          if (cartBtn) {
+            console.log('🚪 Clicking cart button...');
+            cartBtn.click();
+          } else {
+            console.log('❌ Cart button not found');
+          }
+        }, 200);
+        
+        // Close modal
         setTimeout(() => {
           closeModal();
           btn.querySelector('span').textContent = 'Add to Cart';
           btn.disabled = false;
-        }, 500);
+        }, 300);
         
-      }, 200);
+      }, 100);
 
     } catch (error) {
-      console.error('❌ Error:', error);
+      console.error('❌ Add to cart error:', error);
       alert('Error adding to cart');
       btn.classList.remove('loading');
       btn.disabled = false;
