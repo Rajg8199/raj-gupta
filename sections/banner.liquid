@@ -1,3 +1,9 @@
+{% comment %}
+  Hero Banner Section - UPDATED LAYOUT VERSION
+  - More white space above heading
+  - Button positioned at bottom
+  - Content grouped at top
+{% endcomment %}
 
 <style>
 /* ========================================
@@ -26,7 +32,8 @@
   min-height: 710px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  align-items: flex-start;
+  justify-content: flex-end;
 }
 
 /* Ultra-wide (4K) optimization */
@@ -132,40 +139,39 @@
     display: none;
   }
   
-.hero-banner__background-mobile {
+  .hero-banner__background-mobile {
     display: block;
-    margin-top: 200px;
     position: absolute;
     inset: 0;
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
     z-index: 1;
-}
+  }
 }
 
 /* ========================================
-   Content Area - TOP SECTION
+   Content Area - Unified for Desktop
    ======================================== */
-.hero-banner__content-top {
+.hero-banner__content-wrapper {
   position: relative;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 540px;
+}
+
+.hero-banner__content-top {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  max-width: 540px;
 }
 
-/* ========================================
-   Content Area - BOTTOM SECTION (Button)
-   ======================================== */
 .hero-banner__content-bottom {
-  position: relative;
-  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  max-width: 540px;
 }
 
 /* Brand */
@@ -532,7 +538,7 @@
     display: none;
   }
 
-  /* Hero content - CENTERED ON MOBILE */
+  /* Hero content - SPLIT LAYOUT ON MOBILE */
   .hero-banner__container {
     padding: 100px 24px 60px;
     min-height: 500px;
@@ -540,15 +546,26 @@
     justify-content: space-between;
   }
 
-  .hero-banner__content-top {
+  .hero-banner__content-wrapper {
+    width: 100%;
     max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1;
+  }
+
+  .hero-banner__content-top {
     gap: 16px;
     align-items: center;
+    width: 100%;
   }
 
   .hero-banner__content-bottom {
-    max-width: 100%;
     align-items: center;
+    width: 100%;
+    margin-top: auto;
   }
 
   .hero-banner__heading {
@@ -566,7 +583,7 @@
 
 @media screen and (max-width: 749px) {
   .hero-banner__container {
-    padding: 50px 16px 50px;
+    padding: 80px 16px 50px;
     min-height: 450px;
   }
   
@@ -575,12 +592,8 @@
   }
 
   .hero-banner__heading {
-    font-size: 30px;
-    font-weight:300;
+    font-size: 32px;
   }
-  p.hero-banner__description-mobile {
-    font-size: 16px;
-}
 
   .hero-banner__brand img {
     width: 150px;
@@ -601,17 +614,25 @@
   }
 }
 
-.hero-banner__content-top > * {
+.hero-banner__content-wrapper {
   animation: fadeInUp 0.6s ease-out backwards;
 }
 
-.hero-banner__content-bottom {
+.hero-banner__heading { 
+  animation: fadeInUp 0.6s ease-out backwards;
+  animation-delay: 0.2s; 
+}
+
+.hero-banner__description,
+.hero-banner__description-mobile { 
+  animation: fadeInUp 0.6s ease-out backwards;
+  animation-delay: 0.3s; 
+}
+
+.hero-banner__button {
   animation: fadeInUp 0.6s ease-out backwards;
   animation-delay: 0.4s;
 }
-
-.hero-banner__heading { animation-delay: 0.2s; }
-.hero-banner__description { animation-delay: 0.3s; }
 
 /* Prevent body scroll when menu is open */
 body.menu-open {
@@ -717,37 +738,38 @@ body.menu-open .hero-banner__top-bar {
       <div class="hero-banner__background hero-banner__background-mobile" style="background-image: url('{{ section.settings.background_image | image_url: width: 1200 }}');"></div>
     {%- endif -%}
 
-    <!-- TOP CONTENT: Heading and Description -->
-    
-    <div class="hero-banner__content-top">
-      {%- if section.settings.heading != blank -%}
-        <h1 class="hero-banner__heading">{{ section.settings.heading }}</h1>
-      {%- endif -%}
+    <!-- Content Wrapper -->
+    <div class="hero-banner__content-wrapper">
+      <!-- TOP CONTENT: Heading and Description -->
+      <div class="hero-banner__content-top">
+        {%- if section.settings.heading != blank -%}
+          <h1 class="hero-banner__heading">{{ section.settings.heading }}</h1>
+        {%- endif -%}
 
-      {%- if section.settings.description != blank -%}
-        <p class="hero-banner__description">{{ section.settings.description }}</p>
-      {%- endif -%}
-      
-      {%- if section.settings.description_mobile != blank -%}
-        <p class="hero-banner__description-mobile">{{ section.settings.description_mobile }}</p>
-      {%- elsif section.settings.description != blank -%}
-        <p class="hero-banner__description-mobile">{{ section.settings.description }}</p>
-      {%- endif -%}
-    
-    </div>
+        {%- if section.settings.description != blank -%}
+          <p class="hero-banner__description">{{ section.settings.description }}</p>
+        {%- endif -%}
+        
+        {%- if section.settings.description_mobile != blank -%}
+          <p class="hero-banner__description-mobile">{{ section.settings.description_mobile }}</p>
+        {%- elsif section.settings.description != blank -%}
+          <p class="hero-banner__description-mobile">{{ section.settings.description }}</p>
+        {%- endif -%}
+      </div>
 
-    <!-- BOTTOM CONTENT: Button Only -->
-    <div class="hero-banner__content-bottom">
-      {%- if section.settings.button_text != blank -%}
-        <a href="{{ section.settings.button_link }}" class="hero-banner__button">
-          {{ section.settings.button_text }}
-          <span class="hero-banner__button-arrow">
-            <svg width="27" height="12" viewBox="0 0 27 12" fill="none">
-              <path d="M0.75 4.77295L7.83954e-08 4.77295L-7.83954e-08 6.27295L0.75 6.27295L0.75 5.52295L0.75 4.77295ZM26.7876 6.05328C27.0805 5.76039 27.0805 5.28551 26.7876 4.99262L22.0146 0.21965C21.7217 -0.0732435 21.2468 -0.0732435 20.9539 0.21965C20.6611 0.512543 20.6611 0.987417 20.9539 1.28031L25.1966 5.52295L20.9539 9.76559C20.6611 10.0585 20.6611 10.5334 20.9539 10.8263C21.2468 11.1191 21.7217 11.1191 22.0146 10.8263L26.7876 6.05328ZM0.75 5.52295L0.75 6.27295L26.2572 6.27295L26.2572 5.52295L26.2572 4.77295L0.75 4.77295L0.75 5.52295Z" fill="white"/>
-            </svg>
-          </span>
-        </a>
-      {%- endif -%}
+      <!-- BOTTOM CONTENT: Button Only -->
+      <div class="hero-banner__content-bottom">
+        {%- if section.settings.button_text != blank -%}
+          <a href="{{ section.settings.button_link }}" class="hero-banner__button">
+            {{ section.settings.button_text }}
+            <span class="hero-banner__button-arrow">
+              <svg width="27" height="12" viewBox="0 0 27 12" fill="none">
+                <path d="M0.75 4.77295L7.83954e-08 4.77295L-7.83954e-08 6.27295L0.75 6.27295L0.75 5.52295L0.75 4.77295ZM26.7876 6.05328C27.0805 5.76039 27.0805 5.28551 26.7876 4.99262L22.0146 0.21965C21.7217 -0.0732435 21.2468 -0.0732435 20.9539 0.21965C20.6611 0.512543 20.6611 0.987417 20.9539 1.28031L25.1966 5.52295L20.9539 9.76559C20.6611 10.0585 20.6611 10.5334 20.9539 10.8263C21.2468 11.1191 21.7217 11.1191 22.0146 10.8263L26.7876 6.05328ZM0.75 5.52295L0.75 6.27295L26.2572 6.27295L26.2572 5.52295L26.2572 4.77295L0.75 4.77295L0.75 5.52295Z" fill="white"/>
+              </svg>
+            </span>
+          </a>
+        {%- endif -%}
+      </div>
     </div>
   </div>
 
