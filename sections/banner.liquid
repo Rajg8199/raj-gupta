@@ -1,7 +1,8 @@
 {% comment %}
-  Hero Banner Section - FINAL FIXED VERSION
-  - Logo always centered on mobile
-  - Hamburger and close button in same position
+  Hero Banner Section - UPDATED LAYOUT VERSION
+  - More white space above heading
+  - Button positioned at bottom
+  - Content grouped at top
 {% endcomment %}
 
 <style>
@@ -27,16 +28,17 @@
   position: relative;
   max-width: 100%;
   margin: 0 auto;
-  padding: 40px;
+  padding: 120px 40px 40px;
   min-height: 710px;
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 /* Ultra-wide (4K) optimization */
 @media screen and (min-width: 1920px) {
   .hero-banner__container {
-    padding: 80px;
+    padding: 160px 80px 80px;
     min-height: 80vh;
   }
   h1.hero-banner__heading {
@@ -44,7 +46,7 @@
   }
   .hero-banner__content {
     max-width: 100% !important;
-    gap: 80px !important;
+    gap: 40px !important;
   }
   p.hero-banner__description { 
     font-size: 38px;
@@ -77,7 +79,7 @@
 
 @media screen and (min-width: 3000px) {
   .hero-banner__container {
-    padding: 120px 120px 200px 120px;
+    padding: 200px 120px 120px;
     min-height: 80vh;
   }
   h1.hero-banner__heading {
@@ -85,7 +87,7 @@
   }
   .hero-banner__content {
     max-width: 100% !important;
-    gap: 102px !important;
+    gap: 50px !important;
   }
   p.hero-banner__description {
     font-size: 48px;
@@ -148,14 +150,26 @@
 }
 
 /* ========================================
-   Left Content Area
+   Content Area - TOP SECTION
    ======================================== */
-.hero-banner__content {
+.hero-banner__content-top {
   position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 20px;
+  max-width: 540px;
+}
+
+/* ========================================
+   Content Area - BOTTOM SECTION (Button)
+   ======================================== */
+.hero-banner__content-bottom {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   max-width: 540px;
 }
 
@@ -461,7 +475,6 @@
     background: none;
     border: none;
     cursor: pointer;
-
     grid-column: 1;
   }
 
@@ -495,15 +508,20 @@
 
   /* Hero content - CENTERED ON MOBILE */
   .hero-banner__container {
-    padding: 80px 24px 60px;
+    padding: 100px 24px 60px;
     min-height: 500px;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
   }
 
-  .hero-banner__content {
+  .hero-banner__content-top {
     max-width: 100%;
-    gap: 24px;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .hero-banner__content-bottom {
+    max-width: 100%;
     align-items: center;
   }
 
@@ -515,11 +533,6 @@
     font-size: 15px;
   }
 
-  /* Center button on mobile */
-  .hero-banner__button {
-    align-self: center;
-  }
-
   .hero-banner__footer {
     padding: 12px 24px;
   }
@@ -527,13 +540,13 @@
 
 @media screen and (max-width: 749px) {
   .hero-banner__container {
-    padding: 70px 16px 50px;
+    padding: 80px 16px 50px;
     min-height: 450px;
   }
+  
   .hero-banner__mobile-menu-text {
     font-size: 16px;
-    
-}
+  }
 
   .hero-banner__heading {
     font-size: 32px;
@@ -558,13 +571,17 @@
   }
 }
 
-.hero-banner__content > * {
+.hero-banner__content-top > * {
   animation: fadeInUp 0.6s ease-out backwards;
+}
+
+.hero-banner__content-bottom {
+  animation: fadeInUp 0.6s ease-out backwards;
+  animation-delay: 0.4s;
 }
 
 .hero-banner__heading { animation-delay: 0.2s; }
 .hero-banner__description { animation-delay: 0.3s; }
-.hero-banner__button { animation-delay: 0.4s; }
 
 /* Prevent body scroll when menu is open */
 body.menu-open {
@@ -670,7 +687,8 @@ body.menu-open .hero-banner__top-bar {
       <div class="hero-banner__background hero-banner__background-mobile" style="background-image: url('{{ section.settings.background_image | image_url: width: 1200 }}');"></div>
     {%- endif -%}
 
-    <div class="hero-banner__content">
+    <!-- TOP CONTENT: Heading and Description -->
+    <div class="hero-banner__content-top">
       {%- if section.settings.heading != blank -%}
         <h1 class="hero-banner__heading">{{ section.settings.heading }}</h1>
       {%- endif -%}
@@ -678,7 +696,10 @@ body.menu-open .hero-banner__top-bar {
       {%- if section.settings.description != blank -%}
         <p class="hero-banner__description">{{ section.settings.description }}</p>
       {%- endif -%}
+    </div>
 
+    <!-- BOTTOM CONTENT: Button Only -->
+    <div class="hero-banner__content-bottom">
       {%- if section.settings.button_text != blank -%}
         <a href="{{ section.settings.button_link }}" class="hero-banner__button">
           {{ section.settings.button_text }}
