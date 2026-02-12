@@ -718,6 +718,7 @@ body.menu-open .hero-banner__top-bar {
     {%- endif -%}
 
     <!-- TOP CONTENT: Heading and Description -->
+    <div class="hero-banner-desktop">
     <div class="hero-banner__content-top">
       {%- if section.settings.heading != blank -%}
         <h1 class="hero-banner__heading">{{ section.settings.heading }}</h1>
@@ -732,6 +733,7 @@ body.menu-open .hero-banner__top-bar {
       {%- elsif section.settings.description != blank -%}
         <p class="hero-banner__description-mobile">{{ section.settings.description }}</p>
       {%- endif -%}
+    </div>
     </div>
 
     <!-- BOTTOM CONTENT: Button Only -->
