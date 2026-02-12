@@ -1,3 +1,4 @@
+
 <style>
 /* ========================================
    CSS Reset & Base Styles
@@ -33,82 +34,81 @@
     padding: 80px;
     min-height: 80vh;
   }
-   h1.hero-banner__heading {
+  h1.hero-banner__heading {
     font-size: 130px;
-}
-.hero-banner__content {
+  }
+  .hero-banner__content {
     max-width: 100% !important;
     gap: 80px !important;
-}
-p.hero-banner__description { 
+  }
+  p.hero-banner__description { 
     font-size: 38px;
     max-width: 900px;
-}
-a.hero-banner__button {
+  }
+  a.hero-banner__button {
     font-size: 28px;
     width: 420px;
-     padding: 30px;
-}
-p.hero-banner__footer-text {
+    padding: 30px;
+  }
+  p.hero-banner__footer-text {
     font-size: 36px;
-}
-a.hero-banner__top-bar-button {
+  }
+  a.hero-banner__top-bar-button {
     font-size: 28px;
     padding: 16px 40px;
     gap: 20px;
-}
-a.hero-banner__top-bar-button svg {
+  }
+  a.hero-banner__top-bar-button svg {
     width: 50px;
     height: 50px;
-}
-.hero-banner__top-bar-text {
+  }
+  .hero-banner__top-bar-text {
     font-size: 36px !important;
-}
-.hero-banner__brand {
+  }
+  .hero-banner__brand {
     width: 320px !important;
-}
-
+  }
 }
 
 @media screen and (min-width: 3000px) {
-.hero-banner__container {
+  .hero-banner__container {
     padding: 120px 120px 200px 120px;
     min-height: 80vh;
-}
+  }
   h1.hero-banner__heading {
     font-size: 165px;
-}
-.hero-banner__content {
+  }
+  .hero-banner__content {
     max-width: 100% !important;
     gap: 102px !important;
-}
-p.hero-banner__description {
+  }
+  p.hero-banner__description {
     font-size: 48px;
     max-width: 1150px;
-}
-a.hero-banner__button {
+  }
+  a.hero-banner__button {
     font-size: 38px;
     width: 520px;
     padding: 30px;
-}
-p.hero-banner__footer-text {
+  }
+  p.hero-banner__footer-text {
     font-size: 42px;
-}
-a.hero-banner__top-bar-button {
+  }
+  a.hero-banner__top-bar-button {
     font-size: 42px;
     padding: 20px 60px;
     gap: 30px;
-}
-a.hero-banner__top-bar-button svg {
+  }
+  a.hero-banner__top-bar-button svg {
     width: 64px;
     height: 64px;
-}
-.hero-banner__top-bar-text {
+  }
+  .hero-banner__top-bar-text {
     font-size: 42px !important;
-}
-.hero-banner__brand {
+  }
+  .hero-banner__brand {
     width: 400px !important;
-}
+  }
 }
 
 /* Background Image */
@@ -216,7 +216,7 @@ a.hero-banner__top-bar-button svg {
 }
 
 /* ========================================
-   Top Bar
+   Top Bar - Desktop
    ======================================== */
 .hero-banner__top-bar {
   background-color: #f5f5f5;
@@ -245,6 +245,7 @@ a.hero-banner__top-bar-button svg {
   font-family: 'Jost-Regular';
   font-weight: 600;
   text-transform: uppercase;
+  text-decoration: none;
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -256,17 +257,81 @@ a.hero-banner__top-bar-button svg {
   transform: translateX(4px);
 }
 
+/* Hide hamburger on desktop */
+.hero-banner__hamburger {
+  display: none;
+}
+
+/* ========================================
+   Mobile Menu Overlay
+   ======================================== */
+.hero-banner__mobile-menu {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #f5f5f5;
+  z-index: 9999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  padding: 40px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.hero-banner__mobile-menu.active {
+  display: flex;
+  opacity: 1;
+}
+
+.hero-banner__mobile-menu-close {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  font-size: 40px;
+  cursor: pointer;
+  padding: 10px;
+  line-height: 1;
+}
+
+.hero-banner__mobile-menu-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  text-align: center;
+}
+
+.hero-banner__mobile-menu-brand {
+  width: 200px;
+}
+
+.hero-banner__mobile-menu-brand img {
+  width: 100%;
+  height: auto;
+}
+
+.hero-banner__mobile-menu-text {
+  font-family: 'Jost-Regular';
+  font-size: 20px;
+  color: black;
+}
+
 /* Ultra-wide top bar */
 @media screen and (min-width: 1920px) {
   .hero-banner__top-bar {
-   
     padding: 16px 80px;
   }
 }
 
 @media screen and (min-width: 3000px) {
   .hero-banner__top-bar {
-    
     padding: 20px 120px;
   }
 }
@@ -292,22 +357,77 @@ a.hero-banner__top-bar-button svg {
 /* Ultra-wide footer */
 @media screen and (min-width: 1920px) {
   .hero-banner__footer {
-   
     padding: 16px 80px;
   }
 }
 
 @media screen and (min-width: 3000px) {
   .hero-banner__footer {
-   
     padding: 20px 120px;
   }
 }
 
 /* ========================================
-   Mobile Responsive
+   Mobile Responsive - FIXED LAYOUT
    ======================================== */
 @media screen and (max-width: 989px) {
+  /* Top bar - horizontal layout on mobile */
+  .hero-banner__top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    gap: 12px;
+    flex-wrap: nowrap;
+  }
+
+  /* Show hamburger menu on mobile */
+  .hero-banner__hamburger {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    order: -1; /* Put hamburger first */
+  }
+
+  .hero-banner__hamburger span {
+    width: 25px;
+    height: 3px;
+    background-color: black;
+    transition: all 0.3s ease;
+  }
+
+  /* Brand in center */
+  .hero-banner__brand {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    order: 0;
+    width: auto !important;
+  }
+
+  .hero-banner__brand img {
+    width: 120px;
+    height: auto;
+  }
+
+  /* Hide desktop text */
+  .hero-banner__top-bar-text {
+    display: none;
+  }
+
+  /* Button on right */
+  .hero-banner__top-bar-button {
+    padding: 8px 16px;
+    font-size: 12px;
+    order: 1;
+    white-space: nowrap;
+  }
+
+  /* Hero content */
   .hero-banner__container {
     padding: 80px 24px 60px;
     min-height: 500px;
@@ -326,12 +446,6 @@ a.hero-banner__top-bar-button svg {
     font-size: 15px;
   }
 
-  .hero-banner__top-bar {
-    justify-content: center;
-    flex-wrap: wrap;
-    padding: 12px 24px;
-  }
-
   .hero-banner__footer {
     padding: 12px 24px;
   }
@@ -347,8 +461,13 @@ a.hero-banner__top-bar-button svg {
     font-size: 32px;
   }
 
-  .hero-banner__brand {
-    width: 90px;
+  .hero-banner__brand img {
+    width: 100px;
+  }
+
+  .hero-banner__top-bar-button {
+    padding: 8px 12px;
+    font-size: 11px;
   }
 }
 
@@ -374,38 +493,84 @@ a.hero-banner__top-bar-button svg {
 .hero-banner__description { animation-delay: 0.3s; }
 .hero-banner__button { animation-delay: 0.4s; }
 
+/* Prevent body scroll when menu is open */
+body.menu-open {
+  overflow: hidden;
+}
 </style>
 
 <section class="hero-banner">
   {%- if section.settings.show_top_bar -%}
     <div class="hero-banner__top-bar">
-         {%- if section.settings.brand_logo != blank -%}
-  <div class="hero-banner__brand">
-    <a href="{{ routes.root_url }}" aria-label="Go to homepage">
-      <img
-        src="{{ section.settings.brand_logo | image_url: width: 300 }}"
-        alt="{{ section.settings.brand_logo.alt | escape }}"
-        loading="lazy"
-      >
-    </a>
-  </div>
-{%- endif -%}
+      <!-- Hamburger Menu (Mobile Only) -->
+      <button class="hero-banner__hamburger" aria-label="Open menu" id="hamburger-btn-{{ section.id }}">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
 
+      <!-- Brand Logo (Center on mobile) -->
+      {%- if section.settings.brand_logo != blank -%}
+        <div class="hero-banner__brand">
+          <a href="{{ routes.root_url }}" aria-label="Go to homepage">
+            <img
+              src="{{ section.settings.brand_logo | image_url: width: 300 }}"
+              alt="{{ section.settings.brand_logo.alt | escape }}"
+              loading="lazy"
+            >
+          </a>
+        </div>
+      {%- endif -%}
 
+      <!-- Desktop Text (Hidden on mobile) -->
       {%- if section.settings.top_bar_text != blank -%}
         <span class="hero-banner__top-bar-text">{{ section.settings.top_bar_text }}</span>
       {%- endif -%}
+
+      <!-- Button (Always visible) -->
       {%- if section.settings.top_bar_button_text != blank -%}
         <a href="{{ section.settings.top_bar_button_link }}" class="hero-banner__top-bar-button">
           {{ section.settings.top_bar_button_text }}
           <span class="hero-banner__button-arrow">
             <svg width="26" height="12" viewBox="0 0 26 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M0.75 4.77298L7.37629e-08 4.77298L-7.37629e-08 6.27298L0.75 6.27298L0.75 4.77298ZM25.2803 6.05331C25.5732 5.76042 25.5732 5.28554 25.2803 4.99265L20.5074 0.21968C20.2145 -0.073213 19.7396 -0.0732131 19.4467 0.21968C19.1538 0.512574 19.1538 0.987447 19.4467 1.28034L23.6893 5.52298L19.4467 9.76562C19.1538 10.0585 19.1538 10.5334 19.4467 10.8263C19.7396 11.1192 20.2145 11.1192 20.5074 10.8263L25.2803 6.05331ZM0.75 6.27298L24.75 6.27298L24.75 4.77298L0.75 4.77298L0.75 6.27298Z" fill="black"/>
-</svg>
-
+              <path d="M0.75 4.77298L7.37629e-08 4.77298L-7.37629e-08 6.27298L0.75 6.27298L0.75 4.77298ZM25.2803 6.05331C25.5732 5.76042 25.5732 5.28554 25.2803 4.99265L20.5074 0.21968C20.2145 -0.073213 19.7396 -0.0732131 19.4467 0.21968C19.1538 0.512574 19.1538 0.987447 19.4467 1.28034L23.6893 5.52298L19.4467 9.76562C19.1538 10.0585 19.1538 10.5334 19.4467 10.8263C19.7396 11.1192 20.2145 11.1192 20.5074 10.8263L25.2803 6.05331ZM0.75 6.27298L24.75 6.27298L24.75 4.77298L0.75 4.77298L0.75 6.27298Z" fill="currentColor"/>
+            </svg>
           </span>
         </a>
       {%- endif -%}
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="hero-banner__mobile-menu" id="mobile-menu-{{ section.id }}">
+      <button class="hero-banner__mobile-menu-close" aria-label="Close menu" id="menu-close-{{ section.id }}">
+        ×
+      </button>
+      
+      <div class="hero-banner__mobile-menu-content">
+        {%- if section.settings.brand_logo != blank -%}
+          <div class="hero-banner__mobile-menu-brand">
+            <img
+              src="{{ section.settings.brand_logo | image_url: width: 400 }}"
+              alt="{{ section.settings.brand_logo.alt | escape }}"
+            >
+          </div>
+        {%- endif -%}
+
+        {%- if section.settings.top_bar_text != blank -%}
+          <p class="hero-banner__mobile-menu-text">{{ section.settings.top_bar_text }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.top_bar_button_text != blank -%}
+          <a href="{{ section.settings.top_bar_button_link }}" class="hero-banner__top-bar-button">
+            {{ section.settings.top_bar_button_text }}
+            <span class="hero-banner__button-arrow">
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none">
+                <path d="M0.75 4.77298L7.37629e-08 4.77298L-7.37629e-08 6.27298L0.75 6.27298L0.75 4.77298ZM25.2803 6.05331C25.5732 5.76042 25.5732 5.28554 25.2803 4.99265L20.5074 0.21968C20.2145 -0.073213 19.7396 -0.0732131 19.4467 0.21968C19.1538 0.512574 19.1538 0.987447 19.4467 1.28034L23.6893 5.52298L19.4467 9.76562C19.1538 10.0585 19.1538 10.5334 19.4467 10.8263C19.7396 11.1192 20.2145 11.1192 20.5074 10.8263L25.2803 6.05331ZM0.75 6.27298L24.75 6.27298L24.75 4.77298L0.75 4.77298L0.75 6.27298Z" fill="currentColor"/>
+              </svg>
+            </span>
+          </a>
+        {%- endif -%}
+      </div>
     </div>
   {%- endif -%}
 
@@ -416,8 +581,6 @@ a.hero-banner__top-bar-button svg {
 
     <!-- Left Content Area -->
     <div class="hero-banner__content">
-     
-
       {%- if section.settings.heading != blank -%}
         <h1 class="hero-banner__heading">{{ section.settings.heading }}</h1>
       {%- endif -%}
@@ -430,11 +593,9 @@ a.hero-banner__top-bar-button svg {
         <a href="{{ section.settings.button_link }}" class="hero-banner__button">
           {{ section.settings.button_text }}
           <span class="hero-banner__button-arrow">
-           <svg width="27" height="12" viewBox="0 0 27 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M0.75 4.77295L7.83954e-08 4.77295L-7.83954e-08 6.27295L0.75 6.27295L0.75 5.52295L0.75 4.77295ZM26.7876 6.05328C27.0805 5.76039 27.0805 5.28551 26.7876 4.99262L22.0146 0.21965C21.7217 -0.0732435 21.2468 -0.0732435 20.9539 0.21965C20.6611 0.512543 20.6611 0.987417 20.9539 1.28031L25.1966 5.52295L20.9539 9.76559C20.6611 10.0585 20.6611 10.5334 20.9539 10.8263C21.2468 11.1191 21.7217 11.1191 22.0146 10.8263L26.7876 6.05328ZM0.75 5.52295L0.75 6.27295L26.2572 6.27295L26.2572 5.52295L26.2572 4.77295L0.75 4.77295L0.75 5.52295Z" fill="white"/>
-</svg>
-
-
+            <svg width="27" height="12" viewBox="0 0 27 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0.75 4.77295L7.83954e-08 4.77295L-7.83954e-08 6.27295L0.75 6.27295L0.75 5.52295L0.75 4.77295ZM26.7876 6.05328C27.0805 5.76039 27.0805 5.28551 26.7876 4.99262L22.0146 0.21965C21.7217 -0.0732435 21.2468 -0.0732435 20.9539 0.21965C20.6611 0.512543 20.6611 0.987417 20.9539 1.28031L25.1966 5.52295L20.9539 9.76559C20.6611 10.0585 20.6611 10.5334 20.9539 10.8263C21.2468 11.1191 21.7217 11.1191 22.0146 10.8263L26.7876 6.05328ZM0.75 5.52295L0.75 6.27295L26.2572 6.27295L26.2572 5.52295L26.2572 4.77295L0.75 4.77295L0.75 5.52295Z" fill="white"/>
+            </svg>
           </span>
         </a>
       {%- endif -%}
@@ -447,6 +608,37 @@ a.hero-banner__top-bar-button svg {
     </div>
   {%- endif -%}
 </section>
+
+<script>
+(function() {
+  const sectionId = '{{ section.id }}';
+  const hamburger = document.getElementById(`hamburger-btn-${sectionId}`);
+  const mobileMenu = document.getElementById(`mobile-menu-${sectionId}`);
+  const closeBtn = document.getElementById(`menu-close-${sectionId}`);
+
+  if (hamburger && mobileMenu && closeBtn) {
+    // Open menu
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.add('active');
+      document.body.classList.add('menu-open');
+    });
+
+    // Close menu
+    closeBtn.addEventListener('click', () => {
+      mobileMenu.classList.remove('active');
+      document.body.classList.remove('menu-open');
+    });
+
+    // Close on background click
+    mobileMenu.addEventListener('click', (e) => {
+      if (e.target === mobileMenu) {
+        mobileMenu.classList.remove('active');
+        document.body.classList.remove('menu-open');
+      }
+    });
+  }
+})();
+</script>
 
 {% schema %}
 {
@@ -486,18 +678,16 @@ a.hero-banner__top-bar-button svg {
       "content": "Hero Content"
     },
     {
-  "type": "image_picker",
-  "id": "brand_logo",
-  "label": "Brand logo"
-},
-{
-  "type": "url",
-  "id": "brand_logo_link",
-  "label": "Brand logo link",
-  "default": "/"
-},
-
-
+      "type": "image_picker",
+      "id": "brand_logo",
+      "label": "Brand logo"
+    },
+    {
+      "type": "url",
+      "id": "brand_logo_link",
+      "label": "Brand logo link",
+      "default": "/"
+    },
     {
       "type": "textarea",
       "id": "heading",
@@ -529,7 +719,7 @@ a.hero-banner__top-bar-button svg {
       "type": "image_picker",
       "id": "background_image",
       "label": "Background image",
-      "info": "Upload the full illustration background (with camera, glasses, watch, compass, etc.). Recommended size: 1600x900px"
+      "info": "Upload the full illustration background. Recommended size: 1600x900px"
     },
     {
       "type": "header",
