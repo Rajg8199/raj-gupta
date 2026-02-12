@@ -1,6 +1,7 @@
 {% comment %}
-  Hero Banner Section - Mobile Fixed with Hamburger Menu
-  Matches Figma design with proper mobile interaction
+  Hero Banner Section - FINAL FIXED VERSION
+  - Logo always centered on mobile
+  - Hamburger and close button in same position
 {% endcomment %}
 
 <style>
@@ -10,7 +11,7 @@
 .hero-banner {
   position: relative;
   width: 100%;
-  overflow: visible; /* Changed from hidden to visible to allow menu overlay */
+  overflow: visible;
 }
 
 .hero-banner * {
@@ -304,22 +305,25 @@
    Mobile Menu Overlay - FULL PAGE
    ======================================== */
 .hero-banner__mobile-menu {
-    display: none;
-    width: 100vw;
-    height: 100vh;
-    height: 200px;
-    background-color: #f5f5f5;
-    z-index: 999999;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 40px;
-    padding: 60px 20px;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    overflow-y: auto;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background-color: #f5f5f5;
+  z-index: 999999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  padding: 80px 20px 60px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  overflow-y: auto;
 }
 
 .hero-banner__mobile-menu.active {
@@ -329,14 +333,15 @@
   pointer-events: auto;
 }
 
+/* Close button in SAME position as hamburger */
 .hero-banner__mobile-menu-close {
   position: absolute;
-  top: 20px;
+  top: 15px;
   left: 20px;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 10px;
+  padding: 5px;
   line-height: 1;
   color: black;
   z-index: 100000;
@@ -346,12 +351,28 @@
 }
 
 .hero-banner__mobile-menu-close svg {
-  
+  width: 20px;
+  height: 20px;
   transition: transform 0.3s ease;
 }
 
 .hero-banner__mobile-menu-close:hover svg {
   transform: rotate(90deg);
+}
+
+/* Brand logo in mobile menu - centered */
+.hero-banner__mobile-menu-brand {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150px;
+  z-index: 99999;
+}
+
+.hero-banner__mobile-menu-brand img {
+  width: 100%;
+  height: auto;
 }
 
 .hero-banner__mobile-menu-content {
@@ -367,18 +388,9 @@
 
 /* Button in mobile menu should be visible */
 .hero-banner__mobile-menu-content .hero-banner__top-bar-button {
-  display: inline-flex !important; /* Force show in overlay */
+  display: inline-flex !important;
   padding: 10px 24px;
   font-size: 14px;
-}
-
-.hero-banner__mobile-menu-brand {
-  width: 150px;
-}
-
-.hero-banner__mobile-menu-brand img {
-  width: 100%;
-  height: auto;
 }
 
 .hero-banner__mobile-menu-text {
@@ -437,46 +449,44 @@
    Mobile Responsive - FIXED LAYOUT
    ======================================== */
 @media screen and (max-width: 989px) {
-  /* Top bar - horizontal layout on mobile */
+  /* Top bar - GRID layout for perfect centering */
   .hero-banner__top-bar {
-    display: flex;
-    justify-content: flex-start;
+    display: grid;
+    grid-template-columns: auto 1fr;
     align-items: center;
     padding: 15px 20px;
-    gap: 20px;
-    flex-wrap: nowrap;
+    gap: 0;
     position: relative;
-    z-index: 100; /* Below mobile menu */
+    z-index: 100;
   }
 
-  /* Show hamburger menu on mobile */
+  /* Hamburger on left */
   .hero-banner__hamburger {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     background: none;
     border: none;
     cursor: pointer;
     padding: 5px;
-    order: -1; /* Put hamburger first */
+    grid-column: 1;
   }
 
   .hero-banner__hamburger svg {
-    transition: all 0.3s ease;
+    width: 20px;
+    height: 12px;
   }
 
-  /* Brand in center */
+  /* Brand centered using absolute positioning */
   .hero-banner__brand {
-    flex: 0 0 auto; /* Don't grow or shrink */
-    display: flex;
-    justify-content: flex-start;
-    order: 0;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     width: auto !important;
-    margin-left: 0; /* Remove centering */
   }
 
   .hero-banner__brand img {
-    width: 120px;
+    width: 150px;
     height: auto;
   }
 
@@ -485,27 +495,23 @@
     display: none;
   }
 
-  /* Button on right */
+  /* Button hidden on mobile top bar */
   .hero-banner__top-bar-button {
-    padding: 8px 16px;
-    font-size: 12px;
-    order: 1;
-    white-space: nowrap;
-    display: none; /* HIDE on mobile - only show in overlay */
+    display: none;
   }
 
   /* Hero content - CENTERED ON MOBILE */
   .hero-banner__container {
     padding: 80px 24px 60px;
     min-height: 500px;
-    align-items: center; /* Center vertically */
-    justify-content: center; /* Center horizontally */
+    align-items: center;
+    justify-content: center;
   }
 
   .hero-banner__content {
     max-width: 100%;
     gap: 24px;
-    align-items: center; /* Center children */
+    align-items: center;
   }
 
   .hero-banner__heading {
@@ -537,12 +543,7 @@
   }
 
   .hero-banner__brand img {
-    width: 150px;
-  }
-
-  .hero-banner__top-bar-button {
-    padding: 8px 12px;
-    font-size: 11px;
+    width: 120px;
   }
 }
 
@@ -585,14 +586,13 @@ body.menu-open .hero-banner__top-bar {
       <!-- Hamburger Menu (Mobile Only) -->
       <button class="hero-banner__hamburger" aria-label="Open menu" id="hamburger-btn-{{ section.id }}">
         <svg width="20" height="12" viewBox="0 0 20 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M1 6H19" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M1 1H19" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M1 11H19" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-
+          <path d="M1 6H19" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M1 1H19" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M1 11H19" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </button>
 
-      <!-- Brand Logo (Center on mobile) -->
+      <!-- Brand Logo (Centered on mobile) -->
       {%- if section.settings.brand_logo != blank -%}
         <div class="hero-banner__brand">
           <a href="{{ routes.root_url }}" aria-label="Go to homepage">
@@ -610,12 +610,12 @@ body.menu-open .hero-banner__top-bar {
         <span class="hero-banner__top-bar-text">{{ section.settings.top_bar_text }}</span>
       {%- endif -%}
 
-      <!-- Button (Always visible) -->
+      <!-- Button (Desktop only) -->
       {%- if section.settings.top_bar_button_text != blank -%}
         <a href="{{ section.settings.top_bar_button_link }}" class="hero-banner__top-bar-button">
           {{ section.settings.top_bar_button_text }}
           <span class="hero-banner__button-arrow">
-            <svg width="26" height="12" viewBox="0 0 26 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="26" height="12" viewBox="0 0 26 12" fill="none">
               <path d="M0.75 4.77298L7.37629e-08 4.77298L-7.37629e-08 6.27298L0.75 6.27298L0.75 4.77298ZM25.2803 6.05331C25.5732 5.76042 25.5732 5.28554 25.2803 4.99265L20.5074 0.21968C20.2145 -0.073213 19.7396 -0.0732131 19.4467 0.21968C19.1538 0.512574 19.1538 0.987447 19.4467 1.28034L23.6893 5.52298L19.4467 9.76562C19.1538 10.0585 19.1538 10.5334 19.4467 10.8263C19.7396 11.1192 20.2145 11.1192 20.5074 10.8263L25.2803 6.05331ZM0.75 6.27298L24.75 6.27298L24.75 4.77298L0.75 4.77298L0.75 6.27298Z" fill="currentColor"/>
             </svg>
           </span>
@@ -625,24 +625,25 @@ body.menu-open .hero-banner__top-bar {
 
     <!-- Mobile Menu Overlay -->
     <div class="hero-banner__mobile-menu" id="mobile-menu-{{ section.id }}">
+      <!-- Close button in SAME position as hamburger -->
       <button class="hero-banner__mobile-menu-close" aria-label="Close menu" id="menu-close-{{ section.id }}">
-        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M1 13.9994L13.7279 1.27147" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M1 1L13.7279 13.7279" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+          <path d="M1 13.9994L13.7279 1.27147" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M1 1L13.7279 13.7279" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </button>
+
+      <!-- Brand logo in SAME centered position -->
+      {%- if section.settings.brand_logo != blank -%}
+        <div class="hero-banner__mobile-menu-brand">
+          <img
+            src="{{ section.settings.brand_logo | image_url: width: 300 }}"
+            alt="{{ section.settings.brand_logo.alt | escape }}"
+          >
+        </div>
+      {%- endif -%}
       
       <div class="hero-banner__mobile-menu-content">
-        {%- if section.settings.brand_logo != blank -%}
-          <div class="hero-banner__mobile-menu-brand">
-            <img
-              src="{{ section.settings.brand_logo | image_url: width: 400 }}"
-              alt="{{ section.settings.brand_logo.alt | escape }}"
-            >
-          </div>
-        {%- endif -%}
-
         {%- if section.settings.top_bar_text != blank -%}
           <p class="hero-banner__mobile-menu-text">{{ section.settings.top_bar_text }}</p>
         {%- endif -%}
@@ -672,7 +673,6 @@ body.menu-open .hero-banner__top-bar {
       <div class="hero-banner__background hero-banner__background-mobile" style="background-image: url('{{ section.settings.background_image | image_url: width: 1200 }}');"></div>
     {%- endif -%}
 
-    <!-- Left Content Area -->
     <div class="hero-banner__content">
       {%- if section.settings.heading != blank -%}
         <h1 class="hero-banner__heading">{{ section.settings.heading }}</h1>
@@ -686,7 +686,7 @@ body.menu-open .hero-banner__top-bar {
         <a href="{{ section.settings.button_link }}" class="hero-banner__button">
           {{ section.settings.button_text }}
           <span class="hero-banner__button-arrow">
-            <svg width="27" height="12" viewBox="0 0 27 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="27" height="12" viewBox="0 0 27 12" fill="none">
               <path d="M0.75 4.77295L7.83954e-08 4.77295L-7.83954e-08 6.27295L0.75 6.27295L0.75 5.52295L0.75 4.77295ZM26.7876 6.05328C27.0805 5.76039 27.0805 5.28551 26.7876 4.99262L22.0146 0.21965C21.7217 -0.0732435 21.2468 -0.0732435 20.9539 0.21965C20.6611 0.512543 20.6611 0.987417 20.9539 1.28031L25.1966 5.52295L20.9539 9.76559C20.6611 10.0585 20.6611 10.5334 20.9539 10.8263C21.2468 11.1191 21.7217 11.1191 22.0146 10.8263L26.7876 6.05328ZM0.75 5.52295L0.75 6.27295L26.2572 6.27295L26.2572 5.52295L26.2572 4.77295L0.75 4.77295L0.75 5.52295Z" fill="white"/>
             </svg>
           </span>
@@ -710,19 +710,16 @@ body.menu-open .hero-banner__top-bar {
   const closeBtn = document.getElementById(`menu-close-${sectionId}`);
 
   if (hamburger && mobileMenu && closeBtn) {
-    // Open menu
     hamburger.addEventListener('click', () => {
       mobileMenu.classList.add('active');
       document.body.classList.add('menu-open');
     });
 
-    // Close menu
     closeBtn.addEventListener('click', () => {
       mobileMenu.classList.remove('active');
       document.body.classList.remove('menu-open');
     });
 
-    // Close on background click
     mobileMenu.addEventListener('click', (e) => {
       if (e.target === mobileMenu) {
         mobileMenu.classList.remove('active');
@@ -739,109 +736,25 @@ body.menu-open .hero-banner__top-bar {
   "tag": "section",
   "class": "section-hero-banner",
   "settings": [
-    {
-      "type": "header",
-      "content": "Top Bar Settings"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_top_bar",
-      "label": "Show top bar",
-      "default": true
-    },
-    {
-      "type": "text",
-      "id": "top_bar_text",
-      "label": "Top bar text",
-      "default": "Find the ideal gift for your loved ones."
-    },
-    {
-      "type": "text",
-      "id": "top_bar_button_text",
-      "label": "Top bar button text",
-      "default": "CHOOSE GIFT"
-    },
-    {
-      "type": "url",
-      "id": "top_bar_button_link",
-      "label": "Top bar button link"
-    },
-    {
-      "type": "header",
-      "content": "Hero Content"
-    },
-    {
-      "type": "image_picker",
-      "id": "brand_logo",
-      "label": "Brand logo"
-    },
-    {
-      "type": "url",
-      "id": "brand_logo_link",
-      "label": "Brand logo link",
-      "default": "/"
-    },
-    {
-      "type": "textarea",
-      "id": "heading",
-      "label": "Heading",
-      "default": "The Gift Guide"
-    },
-    {
-      "type": "textarea",
-      "id": "description",
-      "label": "Description",
-      "default": "Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season."
-    },
-    {
-      "type": "text",
-      "id": "button_text",
-      "label": "Button text",
-      "default": "SHOP NOW"
-    },
-    {
-      "type": "url",
-      "id": "button_link",
-      "label": "Button link"
-    },
-    {
-      "type": "header",
-      "content": "Background Image"
-    },
-    {
-      "type": "image_picker",
-      "id": "background_image",
-      "label": "Background image (Desktop)",
-      "info": "Upload the full illustration background. Recommended size: 1600x900px"
-    },
-    {
-      "type": "image_picker",
-      "id": "background_image_mobile",
-      "label": "Background image (Mobile)",
-      "info": "Optional: Upload a different background for mobile. If empty, desktop image will be used. Recommended size: 750x1200px"
-    },
-    {
-      "type": "header",
-      "content": "Footer Settings"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_footer",
-      "label": "Show footer text",
-      "default": true
-    },
-    {
-      "type": "text",
-      "id": "footer_text",
-      "label": "Footer text",
-      "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
-    }
+    { "type": "header", "content": "Top Bar Settings" },
+    { "type": "checkbox", "id": "show_top_bar", "label": "Show top bar", "default": true },
+    { "type": "text", "id": "top_bar_text", "label": "Top bar text", "default": "Find the ideal gift for your loved ones." },
+    { "type": "text", "id": "top_bar_button_text", "label": "Top bar button text", "default": "CHOOSE GIFT" },
+    { "type": "url", "id": "top_bar_button_link", "label": "Top bar button link" },
+    { "type": "header", "content": "Hero Content" },
+    { "type": "image_picker", "id": "brand_logo", "label": "Brand logo" },
+    { "type": "url", "id": "brand_logo_link", "label": "Brand logo link", "default": "/" },
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "The Gift Guide" },
+    { "type": "textarea", "id": "description", "label": "Description", "default": "Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season." },
+    { "type": "text", "id": "button_text", "label": "Button text", "default": "SHOP NOW" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "header", "content": "Background Image" },
+    { "type": "image_picker", "id": "background_image", "label": "Background image (Desktop)", "info": "Recommended size: 1600x900px" },
+    { "type": "image_picker", "id": "background_image_mobile", "label": "Background image (Mobile)", "info": "Optional. Recommended size: 750x1200px" },
+    { "type": "header", "content": "Footer Settings" },
+    { "type": "checkbox", "id": "show_footer", "label": "Show footer text", "default": true },
+    { "type": "text", "id": "footer_text", "label": "Footer text", "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL" }
   ],
-  "presets": [
-    {
-      "name": "Hero Banner",
-      "category": "Custom"
-    }
-  ]
+  "presets": [{ "name": "Hero Banner", "category": "Custom" }]
 }
 {% endschema %}
