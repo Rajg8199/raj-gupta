@@ -301,25 +301,20 @@
    Mobile Menu Overlay - FULL PAGE
    ======================================== */
 .hero-banner__mobile-menu {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh; /* Dynamic viewport height for mobile */
-  background-color: #f5f5f5;
-  z-index: 999999; /* MAXIMUM z-index to cover EVERYTHING */
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 40px;
-  padding: 60px 20px;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  overflow-y: auto;
+    display: none;
+    width: 100vw;
+    height: 200px;
+    background-color: #f5f5f5;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    padding: 60px 20px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    overflow-y: auto;
 }
 
 .hero-banner__mobile-menu.active {
